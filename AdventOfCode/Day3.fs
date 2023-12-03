@@ -10,6 +10,8 @@ type Position = { X: int; Y: int }
 
 type Number = { Position: Position; Value: int }
 
+type NumberWithAdjacent = { Position: Position; Value: int; Adjacent: Position list }
+
 type Schema =
     { PartNumbers: Number list
       Symbols: Position list }
@@ -28,13 +30,28 @@ let parseNumbers (input: string) (lineNumber: int) : Number list =
 let parseSymbols (input: string) (lineNumber: int) : Position list =
     let pattern = @"[^\d.]"
     let matches = Regex.Matches(input, pattern)
-
     [ for ``match`` in matches do
           yield { X = ``match``.Index; Y = lineNumber } ]
+    
+let parseGearsLine (lineNumber: int) (input: string) : Position list =
+    let pattern = @"\*"
+    let matches = Regex.Matches(input, pattern)
+    [ for ``match`` in matches do
+          yield { X = ``match``.Index; Y = lineNumber } ]
+
+let parseGears (input: string) : Position list =
+    input.Split([| "\n"; "\r" |], StringSplitOptions.RemoveEmptyEntries)
+        |> List.ofArray
+        |> List.mapi parseGearsLine
+        |> List.concat
 
 let parseLineOfSchema (lineNumber: int) (input: string): Schema =
     { PartNumbers = parseNumbers input lineNumber
       Symbols = parseSymbols input lineNumber }
+
+let parseLineOfGearsSchema (lineNumber: int) (input: string): Schema =
+    { PartNumbers = parseNumbers input lineNumber
+      Symbols = parseGearsLine lineNumber input }
 
 let parseSchema (input: string) : Schema =
     let startingSchema = { PartNumbers = []; Symbols = [] }
@@ -64,3 +81,30 @@ let hasAdjacentToSymbol (number: Number) (symbols: Position list) : bool =
 let findPartNumbersAdjacentToSymbol (schema: Schema) : Number list =
     schema.PartNumbers
     |> List.filter (fun number -> hasAdjacentToSymbol number schema.Symbols)
+    
+let parseGearsSchema (input: string) : Schema =
+    let startingSchema = { PartNumbers = []; Symbols = [] }
+
+    input.Split([| "\n"; "\r" |], StringSplitOptions.RemoveEmptyEntries)
+    |> List.ofArray
+    |> List.mapi parseLineOfGearsSchema
+    |> List.fold
+        (fun acc s ->
+            { PartNumbers = (List.append acc.PartNumbers s.PartNumbers)
+              Symbols = (List.append acc.Symbols s.Symbols) })
+        startingSchema
+
+let getPartsValueAdjacentToGear (gear: Position) (parts: NumberWithAdjacent list): int =
+    let numbers = parts
+                    |> List.filter (fun p -> List.exists (fun pa -> pa = gear) p.Adjacent)
+                    |> List.map (fun p -> { Value = p.Value; Position = p.Position })
+    match numbers.Length with
+    | 2 -> numbers[0].Value * numbers[1].Value
+    | _ -> 0
+
+let findGearAdjacents (input: Schema) : int list =
+    let numbersWithAdjacents = input.PartNumbers
+                               |> List.map (fun n -> { Value = n.Value; Position = n.Position; Adjacent = produceAdjacentPositions n })
+                               
+    input.Symbols
+    |> List.map (fun gear -> getPartsValueAdjacentToGear gear numbersWithAdjacents)

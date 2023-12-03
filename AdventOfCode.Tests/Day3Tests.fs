@@ -195,4 +195,27 @@ let ``Should calculate result for day 3`` () =
     |> findPartNumbersAdjacentToSymbol
     |> List.map (fun n -> n.Value)
     |> List.sum
-    |> should equal 4361
+    |> should equal 536202
+
+[<Fact>]
+let ``Should find gear symbol positions`` () =
+    parseGears schemaInput
+    |> should equal [ { X = 3; Y = 1 }
+                      { X = 3; Y = 4 }
+                      { X = 5; Y = 8 } ]
+    
+[<Fact>]
+let ``Should find gear parts in sample input`` () =
+    parseGearsSchema schemaInput
+    |> findGearAdjacents
+    |> List.sum
+    |> should equal 467835
+    
+    
+[<Fact>]
+let ``Should find gear parts in test input`` () =
+    File.ReadAllText("./Inputs/Day3/input.txt")
+    |> parseGearsSchema
+    |> findGearAdjacents
+    |> List.sum
+    |> should equal 78272573
