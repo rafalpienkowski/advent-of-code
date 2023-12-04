@@ -11,7 +11,7 @@ let ``Should parse scratchcards`` () =
     parseScratchGameFrom line1
     |> should
         equal
-        { Id = "Card 1"
+        { Id = 1
           WinningNumbers = [ 41; 48; 83; 86; 17 ]
           MyNumbers = [ 83; 86; 6; 31; 17; 9; 48; 53 ] }
 
@@ -19,7 +19,7 @@ let ``Should parse scratchcards`` () =
     parseScratchGameFrom line2
     |> should
         equal
-        { Id = "Card 2"
+        { Id = 2
           WinningNumbers = [ 13; 32; 20; 16; 61 ]
           MyNumbers = [ 61; 30; 68; 82; 17; 32; 24; 19 ] }
     
@@ -27,7 +27,7 @@ let ``Should parse scratchcards`` () =
     parseScratchGameFrom line3
     |> should
         equal
-        { Id = "Card 3"
+        { Id = 3
           WinningNumbers = [ 1; 21; 53; 59; 44 ]
           MyNumbers = [ 69; 82; 63; 72; 16; 21; 14; 1 ] }
         
@@ -35,7 +35,7 @@ let ``Should parse scratchcards`` () =
     parseScratchGameFrom line4
     |> should
         equal
-        { Id = "Card 4"
+        { Id = 4
           WinningNumbers = [ 41; 92; 73; 84; 69 ]
           MyNumbers = [ 59; 84; 76; 51; 58; 5; 54; 83 ] }
         
@@ -43,7 +43,7 @@ let ``Should parse scratchcards`` () =
     parseScratchGameFrom line5
     |> should
         equal
-        { Id = "Card 5"
+        { Id = 5
           WinningNumbers = [ 87; 83; 26; 28; 32 ]
           MyNumbers = [ 88; 30; 70; 12; 93; 22; 82; 36 ] }
         
@@ -51,49 +51,49 @@ let ``Should parse scratchcards`` () =
     parseScratchGameFrom line6
     |> should
         equal
-        { Id = "Card 6"
+        { Id = 6
           WinningNumbers = [ 31; 18; 13; 56; 72 ]
           MyNumbers = [ 74; 77; 10; 23; 35; 67; 36; 11 ] }
 
 [<Fact>]
 let ``Should get winning numbers from games`` () =
     let scratchCard1 =
-        { Id = "Card 1"
+        { Id = 1
           WinningNumbers = [ 41; 48; 83; 86; 17 ]
           MyNumbers = [ 83; 86; 6; 31; 17; 9; 48; 53 ] }
     getWinningNumbersCount scratchCard1
     |> should equal 4
 
     let scratchCard2 =
-        { Id = "Card 2"
+        { Id = 2
           WinningNumbers = [ 13; 32; 20; 16; 61 ]
           MyNumbers = [ 61; 30; 68; 82; 17; 32; 24; 19 ] }
     getWinningNumbersCount scratchCard2
     |> should equal 2
     
     let scratchCard3 =
-        { Id = "Card 3"
+        { Id = 3
           WinningNumbers = [ 1; 21; 53; 59; 44 ]
           MyNumbers = [ 69; 82; 63; 72; 16; 21; 14; 1 ] }
     getWinningNumbersCount scratchCard3
     |> should equal 2
         
     let scratchCard4 =
-        { Id = "Card 4"
+        { Id = 4
           WinningNumbers = [ 41; 92; 73; 84; 69 ]
           MyNumbers = [ 59; 84; 76; 51; 58; 5; 54; 83 ] }
     getWinningNumbersCount scratchCard4
     |> should equal 1
         
     let scratchCard5 =
-        { Id = "Card 5"
+        { Id = 5
           WinningNumbers = [ 87; 83; 26; 28; 32 ]
           MyNumbers = [ 88; 30; 70; 12; 93; 22; 82; 36 ] }
     getWinningNumbersCount scratchCard5
     |> should equal 0
         
     let scratchCard6 =
-        { Id = "Card 6"
+        { Id = 6
           WinningNumbers = [ 31; 18; 13; 56; 72 ]
           MyNumbers = [ 74; 77; 10; 23; 35; 67; 36; 11 ] }
     getWinningNumbersCount scratchCard6
@@ -122,3 +122,47 @@ let ``Calculate sum of points for input`` () =
     |> List.map calculatePointsForGame
     |> List.sum
     |> should equal 23441
+
+[<Fact>]
+let ``Calculate scratchcards with rules from sample input`` () =
+    let scratchCards = parseScratchGamesFrom inputString
+    let initialHand = { Cards = scratchCards
+                                    |> List.map (fun card -> { ScratchCardId = card.Id; Copies = 1 })}
+    let updatedHand = scratchCards
+                      |> List.fold (fun acc card -> gainCopies card acc) initialHand
+    
+    updatedHand
+    |> should equal { Cards = [
+                        { ScratchCardId = 1; Copies = 1 }
+                        { ScratchCardId = 2; Copies = 2 }
+                        { ScratchCardId = 3; Copies = 4 }
+                        { ScratchCardId = 4; Copies = 8 }
+                        { ScratchCardId = 5; Copies = 14 }
+                        { ScratchCardId = 6; Copies = 1 }
+                    ]}
+                      
+[<Fact>]
+let ``Calculate scratchcards count for new rules from sample input`` () =
+    let scratchCards = parseScratchGamesFrom inputString
+    let initialHand = { Cards = scratchCards
+                                    |> List.map (fun card -> { ScratchCardId = card.Id; Copies = 1 })}
+    let updatedHand = scratchCards
+                      |> List.fold (fun acc card -> gainCopies card acc) initialHand
+    
+    updatedHand.Cards
+    |> List.sumBy (fun card -> card.Copies)
+    |> should equal 30
+
+[<Fact>]
+let ``Calculate scratchcards count for new rules from test input`` () =
+    let scratchCards = File.ReadAllText("./Inputs/Day4/input.txt")
+                       |> parseScratchGamesFrom
+                       
+    let initialHand = { Cards = scratchCards
+                                    |> List.map (fun card -> { ScratchCardId = card.Id; Copies = 1 })}
+    let updatedHand = scratchCards
+                      |> List.fold (fun acc card -> gainCopies card acc) initialHand
+    
+    updatedHand.Cards
+    |> List.sumBy (fun card -> card.Copies)
+    |> should equal 5923918
