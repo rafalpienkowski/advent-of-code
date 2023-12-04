@@ -1,10 +1,8 @@
 module ``day 3 tests``
 
 open System.IO
-open AdventOfCode
 open AdventOfCode.Day3
 open Xunit
-open Day3
 open FsUnit.Xunit
 
 [<Fact>]
