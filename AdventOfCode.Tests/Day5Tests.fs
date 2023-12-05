@@ -89,7 +89,6 @@ let ``Should find lowest locations for farm seeds`` () =
   sampleInput
   |> parseFarm
   |> routeSeedsToLocation
-  |> List.min
   |> should equal 35L
   
 [<Fact>]
@@ -97,6 +96,11 @@ let ``Should find lowest locations for farm seeds from data`` () =
   File.ReadAllText("./Inputs/Day5/input.txt")
   |> parseFarm
   |> routeSeedsToLocation
-  |> List.min
   |> should equal 462648396L
 
+[<Fact>]
+let ``Should find lowest locations for farm seed ranges`` () =
+  sampleInput
+  |> parseRangedFarm
+  |> routeSeedRangesToLocation
+  |> should equal 46L

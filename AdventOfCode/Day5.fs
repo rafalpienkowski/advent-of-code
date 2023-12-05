@@ -7,13 +7,31 @@ type Map =
       SourceRangeStart: Int64
       RangeLength: Int64 }
 
+type SeedRange =
+    { StartLocation: Int64
+      RangeLength: Int64 }
+
 type Farm =
     { Seeds: Int64 list; Maps: Map list list }
+    
+type SeedRangeFarm = { SeedRanges: SeedRange list; Maps: Map list list }
 
 let parseSeeds (seedsStr: string) : Int64 list =
     seedsStr.Substring(seedsStr.IndexOf(":") + 1).Split(" ", StringSplitOptions.RemoveEmptyEntries)
     |> Array.map Int64.Parse
     |> Array.toList
+
+let parseSeedRanges (input: string) : SeedRange list =
+    let rawNumbers = parseSeeds input
+    
+    let rec createSeedRanges (numbers: Int64 list) : SeedRange list =
+        match numbers with
+        | startLocation :: rangeLength :: rest ->
+            { StartLocation = startLocation; RangeLength = rangeLength } :: createSeedRanges rest
+        | _ -> []
+
+    createSeedRanges rawNumbers
+    
 
 let parseMap (mapStr: string) : Map list =
     mapStr.Substring(mapStr.IndexOf(":") + 1).Split("\n", StringSplitOptions.RemoveEmptyEntries)
@@ -40,7 +58,24 @@ let parseFarm (input: string) : Farm =
         ]
         { Seeds = seeds; Maps = maps }
     | _ -> failwith "Invalid input format"
-    
+
+let parseRangedFarm (input: string) : SeedRangeFarm =
+    let sections = input.Split("\n\n")
+
+    match sections with
+    | [| seedsStr; seedToSoilMapStr; soilToFertilizerMapStr; fertilizerToWaterMapStr; waterToLightMapStr; lightToTemperatureMapStr; temperatureToHumidityMapStr; humidityToLocationMapStr |] ->
+        let seedRanges = parseSeedRanges seedsStr
+        let maps = [
+            parseMap seedToSoilMapStr;
+            parseMap soilToFertilizerMapStr;
+            parseMap fertilizerToWaterMapStr;
+            parseMap waterToLightMapStr;
+            parseMap lightToTemperatureMapStr;
+            parseMap temperatureToHumidityMapStr;
+            parseMap humidityToLocationMapStr
+        ]
+        { SeedRanges =  seedRanges; Maps = maps }
+    | _ -> failwith "Invalid input format"
 
 let mapSourceToDestination (source: Int64) (maps: Map list): Int64 =
     
@@ -66,6 +101,19 @@ let routeSeedToLocation (seed: Int64) (maps: Map list list): Int64 =
 
     routeSeed seed maps
 
-let routeSeedsToLocation (farm: Farm): Int64 list =
-    [for seed in farm.Seeds do
-         yield routeSeedToLocation seed farm.Maps]
+let routeSeedsToLocation (farm: Farm): Int64 =
+    let mutable currentLocation = Int64.MaxValue
+    for seed in farm.Seeds do
+         let location = routeSeedToLocation seed farm.Maps
+         if location < currentLocation then
+             currentLocation <- location
+    currentLocation
+    
+let routeSeedRangesToLocation (seedRangeFarm: SeedRangeFarm): Int64 =
+    let mutable currentLocation = Int64.MaxValue
+    for seedRange in seedRangeFarm.SeedRanges do
+         for seed in [seedRange.StartLocation..(seedRange.StartLocation+seedRange.RangeLength)] do
+             let location = routeSeedToLocation seed seedRangeFarm.Maps
+             if location < currentLocation then
+                 currentLocation <- location
+    currentLocation
