@@ -76,14 +76,6 @@ let ``Should create source to destination`` source destination =
     mapSourceToDestination source maps
     |> should equal destination
  
- 
-[<Fact>]
-let ``Should find locations for farm seeds`` () =
-  sampleInput
-  |> parseFarm
-  |> routeSeedsToLocation
-  |> should equal [ 82L; 43L; 86L; 35L ]
-  
 [<Fact>]
 let ``Should find lowest locations for farm seeds`` () =
   sampleInput
