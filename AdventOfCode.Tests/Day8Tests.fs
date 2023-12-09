@@ -68,7 +68,7 @@ let ``Should count ghost steps from ghost sample`` () =
     ghostSample
     |> parse
     |> countGhostSteps
-    |> should equal 6
+    |> should equal 6L
     
 [<Fact>]
 let ``Should count ghost steps for input`` () =
