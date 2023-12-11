@@ -203,8 +203,6 @@ let checkNestDirections (maze: char[,]) (position: Position) (loop: Position lis
             let symbol = symbolOpt.Value
             match direction with
             | North ->
-                if symbol = '-' || symbol = 'F' || symbol = '7' || symbol = 'S' then
-                    
                 symbol = '-' || symbol = 'F' || symbol = '7' || symbol = 'S'
             | South ->
                 symbol = '-'  || symbol = 'L' || symbol = 'J' || symbol = 'S'
