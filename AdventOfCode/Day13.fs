@@ -1,17 +1,12 @@
 module AdventOfCode.Day13
 
 open System
-open System.Text
 
 type Reflection = { LeftColumns: int; RowsAbove: int }
 
 let findLineReflection (margin: int) (lines: string array) : int =
-    let sb = StringBuilder()
 
-    for line in lines do
-        sb.AppendLine(line) |> ignore
-
-    let countDifferences (lines: string array) (idx1: int) (idx2: int) : int =
+    let countDifferences (idx1: int) (idx2: int) : int =
         let rec countDiffs index acc =
             if index < String.length lines[idx1] then
                 let currentDiff = if lines[idx1][index] <> lines[idx2][index] then 1 else 0
@@ -23,12 +18,12 @@ let findLineReflection (margin: int) (lines: string array) : int =
         elif (idx2 >= lines.Length) then 0
         else countDiffs 0 0
 
-    let areMirrors (lines: string array) (line: int) : bool =
+    let areMirrors (line: int) : bool =
         let mutable offset = 0
         let mutable areBroken = false
 
         while offset <= lines.Length / 2 do
-            if countDifferences lines (line - offset - 1) (line + offset) > margin then
+            if countDifferences (line - offset - 1) (line + offset) > margin then
                 areBroken <- true
                 offset <- lines.Length
 
@@ -40,7 +35,7 @@ let findLineReflection (margin: int) (lines: string array) : int =
     let mutable currentLine = lines.Length - 1
 
     while currentLine >= 1 do
-        if areMirrors lines currentLine then
+        if areMirrors currentLine then
             mirrorLine <- currentLine
             currentLine <- 1
 
