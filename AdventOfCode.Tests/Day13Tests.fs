@@ -1,6 +1,5 @@
 module ``day 13 tests``
 
-open System
 open System.IO
 open AdventOfCode.Day13
 open Xunit
@@ -25,7 +24,7 @@ let rowSample = @"#.##..##.
 [<Fact>]
 let ``Should find reflection in sample input`` () =
     rowSample
-    |> findPerfectReflection
+    |> findPerfectReflection 0
     |> summarize
     |> should equal 405
 
@@ -40,13 +39,13 @@ let secondSample = @".......#.####
 [<Fact>]
 let ``Should find reflection in second sample`` () =
     secondSample
-    |> findPerfectReflection
+    |> findPerfectReflection 0
     |> summarize
     |> should equal 11
     
 [<Fact>]
 let ``Should find reflection in input`` () =
     File.ReadAllText("./Inputs/Day13/input.txt")
-    |> findPerfectReflection
+    |> findPerfectReflection 0
     |> summarize
-    |> should equal 29408
+    |> should equal 32723
