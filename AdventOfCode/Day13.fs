@@ -53,10 +53,6 @@ let findMirror (input: string) : Reflection =
       LeftColumns = leftColumns }
 
 let findPerfectReflection (input: string) : Reflection =
-    
-    let temp = input.Split("\n\n", StringSplitOptions.None)
-                |> Array.map (fun map -> map |> findMirror)
-    
     input.Split("\n\n", StringSplitOptions.None)
     |> Array.map (fun map -> map |> findMirror)
     |> Array.fold
