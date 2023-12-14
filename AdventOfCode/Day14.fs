@@ -3,48 +3,103 @@ module AdventOfCode.Day14
 open System
 open System.Text
 
-let toControlPanel (input: string) : string list =
-    input.Split([| "\n"; "\r" |], StringSplitOptions.RemoveEmptyEntries)
+let toControlPanel (input: string) : StringBuilder list =
+    input.Split([| "\n" |], StringSplitOptions.RemoveEmptyEntries)
+    |> Array.map (fun line -> StringBuilder(line))
     |> Array.toList
-    
-let dump (controlPanel: string list) : string =
-    let dumpBuilder = StringBuilder()
-    for line in [0..controlPanel.Length-1] do
-        dumpBuilder.AppendLine(controlPanel[line]) |> ignore
-    
-    dumpBuilder.ToString().TrimEnd()
-    
-let tilt (controlPanel: string list) : string list =
-    let mutable newControlPanel = controlPanel
-    
-    let canMoveTo (line: int) (position: int): int =
-        let mutable checkLine = line
-        while checkLine > 0 && newControlPanel[checkLine-1][position] = '.' do
-            checkLine <- checkLine - 1
-        
-        checkLine
-    
-    let replaceCharInLine (lines: string list) (lineIndex: int) (charIndex: int) (newChar: char) : string list =
-        let originalLine = lines[lineIndex]
-        let newLine = originalLine.Substring(0, charIndex) + string newChar + originalLine.Substring(charIndex + 1)
-        lines
-        |> List.mapi (fun i line -> if i = lineIndex then newLine else line)
-    
-    for line in [1..controlPanel.Length-1] do
-        for position in [0..controlPanel[line].Length-1] do
-            if newControlPanel[line][position] = 'O'  then
-                let possibleLine = canMoveTo line position
-                if possibleLine < line then
-                    newControlPanel <- replaceCharInLine newControlPanel line position '.'
-                    newControlPanel <- replaceCharInLine newControlPanel possibleLine position 'O'
-        
-    newControlPanel
 
-let calculateLoad (controlPanel: string list) : int =
-    let calculateWeightedSum (line: string) (weight: int) =
-        line
-        |> Seq.sumBy (fun c -> if c = 'O' then weight else 0)
-    
+let dump (controlPanel: StringBuilder list) : string =
+    let dumpBuilder = StringBuilder()
+
+    for line in [ 0 .. controlPanel.Length - 1 ] do
+        dumpBuilder.AppendLine(controlPanel[line].ToString()) |> ignore
+
+    dumpBuilder.ToString().TrimEnd()
+
+let tilt (controlPanel: StringBuilder list) : StringBuilder list =
+
+    let canMoveTo (line: int) (position: int) : int =
+        let mutable checkLine = line
+
+        while checkLine > 0 && controlPanel[checkLine - 1][position] = '.' do
+            checkLine <- checkLine - 1
+
+        checkLine
+
+    for line in [ 1 .. controlPanel.Length - 1 ] do
+        for position in [ 0 .. controlPanel[line].Length - 1 ] do
+            if controlPanel[line][position] = 'O' then
+                let possibleLine = canMoveTo line position
+
+                if possibleLine < line then
+                    controlPanel[line][position] <- '.'
+                    controlPanel[possibleLine][position] <- 'O'
+
+    controlPanel
+
+let calculateLoad (controlPanel: StringBuilder list) : int =
+    let calculateWeightedSum (line: StringBuilder) (weight: int) =
+        line.ToString() |> Seq.sumBy (fun c -> if c = 'O' then weight else 0)
+
     controlPanel
     |> List.mapi (fun i line -> calculateWeightedSum line (List.length controlPanel - i))
     |> List.sum
+
+let rotate90DegreesClockwise (controlPanel: StringBuilder list) : StringBuilder list =
+    let numRows = controlPanel.Length
+    let numCols = if numRows > 0 then controlPanel.[0].Length else 0
+
+    let getCharAt (line: int) (position: int) : char =
+        controlPanel.[numCols - position - 1].[line]
+
+    let rotateLine (lineIndex: int) : StringBuilder =
+        let newLine = StringBuilder(numRows)
+
+        for position in 0 .. numCols - 1 do
+            newLine.Append(getCharAt lineIndex position) |> ignore
+
+        newLine
+
+    [ for lineIndex in 0 .. numRows - 1 -> rotateLine lineIndex ]
+
+let cycle (numberOfCycles: int) (controlPanel: StringBuilder list) : StringBuilder list =
+
+    let hash (controlPanel: StringBuilder list) : string =
+        let hashBuilder = StringBuilder()
+
+        for line in [ 0 .. controlPanel.Length - 1 ] do
+            hashBuilder.Append($"{controlPanel[line].ToString()},") |> ignore
+
+        hashBuilder.ToString().TrimEnd()
+    
+    
+    let fullCycle (panel: StringBuilder list) : StringBuilder list =
+        panel
+        |> tilt // north
+        |> rotate90DegreesClockwise
+        |> tilt // west
+        |> rotate90DegreesClockwise
+        |> tilt // south
+        |> rotate90DegreesClockwise
+        |> tilt //east
+        |> rotate90DegreesClockwise
+
+    let rec applyCycles (seen: Map<string, int>) (remainingCycles: int) (currentResult: StringBuilder list) =
+        if remainingCycles = 0 then
+            currentResult
+        else
+            let hash = currentResult |> hash
+            if
+                (seen |> Map.containsKey hash)
+                && ((1000000000 - seen[hash]) % (numberOfCycles - remainingCycles - seen[hash]) = 0)
+            then
+                applyCycles Map.empty 0 currentResult
+            else
+                let updatedResult = fullCycle currentResult
+                let idx = numberOfCycles - remainingCycles
+                applyCycles
+                    (seen |> Map.add hash idx)
+                    (remainingCycles - 1)
+                    updatedResult
+
+    applyCycles Map.empty numberOfCycles controlPanel
