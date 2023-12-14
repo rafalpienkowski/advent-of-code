@@ -21,6 +21,7 @@
         <Compile Include="Day10Tests.fs" />
         <Compile Include="Day11Tests.fs" />
         <Compile Include="Day13Tests.fs" />
+        <Compile Include="Day14Tests.fs" />
         <Compile Include="Program.fs" />
         <Content Include="Inputs\Day1\input.txt">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -53,6 +54,9 @@
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
         <Content Include="Inputs\Day13\input.txt">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Inputs\Day14\input.txt">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
