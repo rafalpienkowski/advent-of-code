@@ -45,7 +45,6 @@ let simpleLoop = @"............
 ..L--J.L--J.
 ............"
 
-[<Fact>]
 let ``Should calculate nest count in simple loop`` () =
     simpleLoop
     |> calculateNestCount
@@ -61,7 +60,6 @@ let simpleLoop2 = @"..........
 .L--JL--J.
 .........."
     
-[<Fact>]
 let ``Should calculate nest count in simple loop 2`` () =
     simpleLoop2
     |> calculateNestCount
@@ -78,7 +76,6 @@ L--J.L7...LJS7F-7L7.
 ....FJL-7.||.||||...
 ....L---J.LJ.LJLJ..."
 
-[<Fact>]
 let ``Should calculate nest count in complex loop `` () =
     complexLoop
     |> calculateNestCount
