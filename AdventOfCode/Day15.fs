@@ -46,7 +46,7 @@ let loadInitialisation (input: string) : InitialisationStep array =
 
 let initialise (input: string) : Box array =
     let steps = input |> loadInitialisation
-    let boxes = Array.init 256 (fun i -> { Id = i; Lens = Seq.empty })
+    let boxes = Array.init 256 (fun index -> { Id = index; Lens = Seq.empty })
 
     let rec initialiseStep (boxes: Box array) (steps: InitialisationStep array) =
         if steps.Length = 0 then
@@ -54,24 +54,24 @@ let initialise (input: string) : Box array =
         else
             let newBoxes =
                 boxes
-                |> Array.mapi (fun i x ->
-                    if i = (steps[0].Lens.Label |> hash) then
+                |> Array.mapi (fun index box ->
+                    if index = (steps[0].Lens.Label |> hash) then
                         match steps[0].Action with
                         | Remove ->
-                            { x with
-                                Lens = x.Lens |> Seq.where (fun l -> l.Label <> steps[0].Lens.Label) }
+                            { box with
+                                Lens = box.Lens |> Seq.where (fun lens -> lens.Label <> steps[0].Lens.Label) }
                         | Save ->
-                            if x.Lens |> Seq.exists (fun l -> l.Label = steps[0].Lens.Label) then
-                                { x with
+                            if box.Lens |> Seq.exists (fun lens -> lens.Label = steps[0].Lens.Label) then
+                                { box with
                                     Lens =
-                                        x.Lens
-                                        |> Seq.map (fun l ->
-                                            if l.Label = steps[0].Lens.Label then steps[0].Lens else l) }
+                                        box.Lens
+                                        |> Seq.map (fun lens ->
+                                            if lens.Label = steps[0].Lens.Label then steps[0].Lens else lens) }
                             else
-                                { x with
-                                    Lens = x.Lens |> Seq.append (steps[0].Lens |> Seq.singleton) }
+                                { box with
+                                    Lens = box.Lens |> Seq.append (steps[0].Lens |> Seq.singleton) }
                     else
-                        x)
+                        box)
 
             initialiseStep newBoxes (steps |> Array.tail)
 
