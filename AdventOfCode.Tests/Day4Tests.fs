@@ -116,7 +116,7 @@ let ``Calculate sum of points from input string`` () =
     
 [<Fact>]
 let ``Calculate sum of points for input`` () =
-    File.ReadAllText("./Inputs/Day4/input.txt")
+    File.ReadAllText("./Inputs/Day4.txt")
     |> parseScratchGamesFrom 
     |> List.map getWinningNumbersCount
     |> List.map calculatePointsForGame
@@ -155,7 +155,7 @@ let ``Calculate scratchcards count for new rules from sample input`` () =
 
 [<Fact>]
 let ``Calculate scratchcards count for new rules from test input`` () =
-    let scratchCards = File.ReadAllText("./Inputs/Day4/input.txt")
+    let scratchCards = File.ReadAllText("./Inputs/Day4.txt")
                        |> parseScratchGamesFrom
                        
     let initialHand = { Cards = scratchCards

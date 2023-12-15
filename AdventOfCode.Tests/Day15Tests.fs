@@ -23,7 +23,7 @@ let ``Should calculate hash for sample input`` () =
 [<Fact>]
 let ``Should calculate hash for test input`` () =
     File
-        .ReadAllText("./Inputs/Day15/input.txt")
+        .ReadAllText("./Inputs/Day15.txt")
         .Split(',', StringSplitOptions.RemoveEmptyEntries)
     |> Array.map hash
     |> Array.sum
@@ -65,7 +65,7 @@ let ``Should calculate focus power for boxes from sample input`` () =
 
 [<Fact>]
 let ``Should calculate focus power for boxes from test input`` () =
-    File.ReadAllText("./Inputs/Day15/input.txt")
+    File.ReadAllText("./Inputs/Day15.txt")
     |> initialise
     |> calculateFocusingPowerFor
     |> should equal 252782

@@ -68,7 +68,7 @@ let ``Should sum game ids for possible games`` () =
     
 [<Fact>]
 let ``Should calculate result for day 2`` () =
-    File.ReadAllText("./Inputs/Day2/input.txt")
+    File.ReadAllText("./Inputs/Day2.txt")
     |> parseGames
     |> sumGameIds
     |> should equal 2283
@@ -118,7 +118,7 @@ let ``Should calculate sum of the power of min sets`` () =
     
 [<Fact>]
 let ``Should calculate power of subset for day 2`` () =
-    File.ReadAllText("./Inputs/Day2/input.txt")
+    File.ReadAllText("./Inputs/Day2.txt")
     |> parseGames
     |> List.map getSubsets
     |> List.map findMinSetOfCubes

@@ -85,7 +85,7 @@ let ``Should find lowest locations for farm seeds`` () =
   
 [<Fact>]
 let ``Should find lowest locations for farm seeds from data`` () =
-  File.ReadAllText("./Inputs/Day5/input.txt")
+  File.ReadAllText("./Inputs/Day5.txt")
   |> parseFarm
   |> routeSeedsToLocation
   |> should equal 462648396L

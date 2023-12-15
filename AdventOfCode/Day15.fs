@@ -44,7 +44,6 @@ let loadInitialisation (input: string) : InitialisationStep array =
 
     input.Split(',', StringSplitOptions.RemoveEmptyEntries) |> Array.map toStep
 
-
 let initialise (input: string) : Box array =
     let steps = input |> loadInitialisation
     let boxes = Array.init 256 (fun i -> { Id = i; Lens = Seq.empty })

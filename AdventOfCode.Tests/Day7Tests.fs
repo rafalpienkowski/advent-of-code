@@ -69,7 +69,7 @@ let ``Should calculate for sample with joker`` () =
     
 [<Fact>]
 let ``Should calculate for input with jokers`` () =
-    File.ReadAllText("./Inputs/Day7/input.txt").Split([| "\n"; "\r" |], StringSplitOptions.RemoveEmptyEntries)
+    File.ReadAllText("./Inputs/Day7.txt").Split([| "\n"; "\r" |], StringSplitOptions.RemoveEmptyEntries)
     |> Array.toList
     |> List.map parseHandWithBid
     |> calculateWinningsForHandsWithJoker

@@ -24,43 +24,43 @@
         <Compile Include="Day14Tests.fs" />
         <Compile Include="Day15Tests.fs" />
         <Compile Include="Program.fs" />
-        <Content Include="Inputs\Day1\input.txt">
+        <Content Include="Inputs\Day1.txt">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Include="Inputs\Day2\input.txt">
+        <Content Include="Inputs\Day2.txt">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Include="Inputs\Day3\input.txt">
+        <Content Include="Inputs\Day3.txt">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Include="Inputs\Day4\input.txt">
+        <Content Include="Inputs\Day4.txt">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Include="Inputs\Day5\input.txt">
+        <Content Include="Inputs\Day5.txt">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Include="Inputs\Day7\input.txt">
+        <Content Include="Inputs\Day7.txt">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Include="Inputs\Day8\input.txt">
+        <Content Include="Inputs\Day8.txt">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Include="Inputs\Day9\input.txt">
+        <Content Include="Inputs\Day9.txt">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Include="Inputs\Day10\input.txt">
+        <Content Include="Inputs\Day10.txt">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Include="Inputs\Day11\input.txt">
+        <Content Include="Inputs\Day11.txt">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Include="Inputs\Day13\input.txt">
+        <Content Include="Inputs\Day13.txt">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Include="Inputs\Day14\input.txt">
+        <Content Include="Inputs\Day14.txt">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Include="Inputs\Day15\input.txt">
+        <Content Include="Inputs\Day15.txt">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>

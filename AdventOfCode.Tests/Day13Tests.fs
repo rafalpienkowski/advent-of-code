@@ -45,7 +45,7 @@ let ``Should find reflection in second sample`` () =
     
 [<Fact>]
 let ``Should find reflection in input`` () =
-    File.ReadAllText("./Inputs/Day13/input.txt")
+    File.ReadAllText("./Inputs/Day13.txt")
     |> findPerfectReflection 0
     |> summarize
     |> should equal 32723

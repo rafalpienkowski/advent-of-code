@@ -52,7 +52,7 @@ let ``Should find shortest paths for all galactics in sample with expansion 2`` 
 [<InlineData(1_000_000, 10494813L)>]
 [<InlineData(2, 10494813L)>]
 let ``Should find shortest paths for all galactics in input 2`` (size: int) (expectedSumOfPaths: Int64) =
-    let input = File.ReadAllText("./Inputs/Day11/input.txt")
+    let input = File.ReadAllText("./Inputs/Day11.txt")
     let expansions = input  |> countExpansions 2
     
     input

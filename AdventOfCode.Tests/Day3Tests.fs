@@ -188,7 +188,7 @@ let ``Should sum part numbers adjacent to a symbol`` () =
     
 [<Fact>]
 let ``Should calculate result for day 3`` () =
-    File.ReadAllText("./Inputs/Day3/input.txt")
+    File.ReadAllText("./Inputs/Day3.txt")
     |> parseSchema
     |> findPartNumbersAdjacentToSymbol
     |> List.map (fun n -> n.Value)
@@ -212,7 +212,7 @@ let ``Should find gear parts in sample input`` () =
     
 [<Fact>]
 let ``Should find gear parts in test input`` () =
-    File.ReadAllText("./Inputs/Day3/input.txt")
+    File.ReadAllText("./Inputs/Day3.txt")
     |> parseGearsSchema
     |> findGearAdjacents
     |> List.sum

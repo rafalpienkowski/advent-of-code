@@ -31,6 +31,6 @@ let ``Should calculate 281 for sample spelled input`` () =
     
 [<Fact>]
 let ``Should calculate result for day 1`` () =
-    File.ReadAllText("./Inputs/Day1/input.txt")
+    File.ReadAllText("./Inputs/Day1.txt")
     |> calculateCalibrationValue
     |> should equal 54249

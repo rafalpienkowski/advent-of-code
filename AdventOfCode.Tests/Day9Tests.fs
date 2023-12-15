@@ -16,7 +16,7 @@ let ``Should calculate next value`` (line: string) (expectedValue: Int64) =
 [<Fact>]
 let ``Should sum prediction from input file`` () =
     File
-        .ReadAllText("./Inputs/Day9/input.txt")
+        .ReadAllText("./Inputs/Day9.txt")
         .Split([| "\n"; "\r" |], StringSplitOptions.RemoveEmptyEntries)
     |> Array.toList
     |> List.map predictNextValue
@@ -33,7 +33,7 @@ let ``Should calculate previous value`` (line: string) (expectedValue: Int64) =
 [<Fact>]
 let ``Should sum history from input file`` () =
     File
-        .ReadAllText("./Inputs/Day9/input.txt")
+        .ReadAllText("./Inputs/Day9.txt")
         .Split([| "\n"; "\r" |], StringSplitOptions.RemoveEmptyEntries)
     |> Array.toList
     |> List.map predictPreviousValue

@@ -47,7 +47,7 @@ let ``Should count steps for anotherSampleNetwork`` () =
 
 [<Fact>]
 let ``Should count steps for input`` () =
-    File.ReadAllText("./Inputs/Day8/input.txt")
+    File.ReadAllText("./Inputs/Day8.txt")
     |> parse
     |> countStepsToZZZ
     |> should equal 18023
@@ -72,7 +72,7 @@ let ``Should count ghost steps from ghost sample`` () =
     
 [<Fact>]
 let ``Should count ghost steps for input`` () =
-    File.ReadAllText("./Inputs/Day8/input.txt")
+    File.ReadAllText("./Inputs/Day8.txt")
     |> parse
     |> countGhostSteps
     |> should equal 14449445933179L

@@ -43,7 +43,7 @@ let ``Should calculate load for sample input control panel`` () =
 
 [<Fact>]
 let ``Should calculate load for control panel`` () =
-    File.ReadAllText("./Inputs/Day14/input.txt")
+    File.ReadAllText("./Inputs/Day14.txt")
     |> toControlPanel
     |> tilt
     |> calculateLoad
@@ -120,7 +120,7 @@ let ``Should cycle 1000000000 times and calculate load`` () =
     
 [<Fact>]
 let ``Should calculate load for control panel cycled`` () =
-    File.ReadAllText("./Inputs/Day14/input.txt")
+    File.ReadAllText("./Inputs/Day14.txt")
     |> toControlPanel
     |> tilt
     |> calculateLoad
@@ -128,7 +128,7 @@ let ``Should calculate load for control panel cycled`` () =
 
 [<Fact>]
 let ``Should cycle 1000000000 times and calculate load for input`` () =
-    File.ReadAllText("./Inputs/Day14/input.txt")
+    File.ReadAllText("./Inputs/Day14.txt")
     |> toControlPanel
     |> cycle 1000000000
     |> calculateLoad

@@ -31,7 +31,7 @@ let ``Should count the longest pipe length for more complex sample`` () =
     
 [<Fact>]
 let ``Should count the longest pipe length for input`` () =
-    File.ReadAllText("./Inputs/Day10/input.txt")
+    File.ReadAllText("./Inputs/Day10.txt")
     |> countLongestLength
     |> should equal 6773
 
