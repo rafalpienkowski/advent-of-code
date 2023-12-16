@@ -1,6 +1,5 @@
 module ``day 16 tests``
 
-open System
 open System.IO
 open AdventOfCode.Day16
 open Xunit
@@ -33,22 +32,31 @@ let expectedEnergizedContraption =
 [<Fact>]
 let ``Should energize contraption from sample input`` () =
     let contraption = sampleInput |> loadContraption
-    let energized = contraption |> energize |> normalize
+    let energized = contraption |> (energize { Position = { X = 0; Y = 0 }; Direction = Right }) |> normalize 
     dump contraption energized |> should equal expectedEnergizedContraption
 
 [<Fact>]
 let ``Should count energized contraption from sample input`` () =
     let positions = sampleInput
                     |> loadContraption
-                    |> energize
+                    |> energize { Position = { X = 0; Y = 0 }; Direction = Right }
                     |> normalize
     positions.Length |> should equal 46
+
+
+[<Fact>]
+let ``Should count max energized contraption from sample input`` () =
+    let positions = sampleInput
+                    |> loadContraption
+                    |> energize { Position = { X = 0; Y = 0 }; Direction = Right }
+                    |> normalize
+    positions.Length |> should equal 51
     
 [<Fact>]
 let ``Should count energized contraption from test input`` () =
     let positions = File.ReadAllText("./Inputs/Day16.txt")
                     |> loadContraption
-                    |> energize
+                    |> energize { Position = { X = 0; Y = 0 }; Direction = Right }
                     |> normalize
     positions.Length |> should equal 7060
 

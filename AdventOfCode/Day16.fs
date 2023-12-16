@@ -117,9 +117,8 @@ let nextMovesFrom (move: Move) (symbol: char) : Move list =
                     Y = move.Position.Y + 1 } } ]
     | _ -> failwith "Unrecognized element"
 
-let energize (contraption: char[,]) : Map<Move, char> =
+let energize (initial: Move) (contraption: char[,]) : Map<Move, char> =
     let energized = Map.empty
-    let initialPosition = { X = 0; Y = 0 }
 
     let isInContraption (position: Position) : bool =
         position.X >= 0
@@ -153,11 +152,7 @@ let energize (contraption: char[,]) : Map<Move, char> =
 
                 light nextMoves newEnergized
 
-    let initialMoves =
-        [ { Position = initialPosition
-            Direction = Right } ]
-
-    light initialMoves energized
+    light [ initial ] energized
 
 let normalize (energized: Map<Move, char>) : Position list =
     energized.Keys
