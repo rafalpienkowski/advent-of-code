@@ -213,7 +213,7 @@ let dump (contraption: char[,]) (energized: Position list) : string =
 
     for row in [ 0 .. (contraption |> rows) - 1 ] do
         for column in [ 0 .. (contraption |> columns) - 1 ] do
-            if energized |> List.contains ({ X = column; Y = row }) then
+            if energized |> List.contains { X = column; Y = row } then
                 contraptionBuilder.Append('#') |> ignore
             else
                 contraptionBuilder.Append('.') |> ignore
