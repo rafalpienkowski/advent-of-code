@@ -18,12 +18,48 @@ type Move =
 let rows = Array2D.length1
 let columns = Array2D.length2
 
+let tailIfMultipleElements lst =
+    match lst with
+    | [] -> [] // Empty list
+    | _ :: rest -> rest
+
 let loadContraption (input: string) : char[,] =
     let lines = input.Split([| "\n"; "\r" |], StringSplitOptions.RemoveEmptyEntries)
     let numRows = Array.length lines
     let numCols = lines |> Array.map (fun line -> line.Length) |> Array.max
 
     Array2D.init numRows numCols (fun row col -> lines[col][row])
+
+let prepareInitialMoves (contraption: char[,]) : Move list =
+    let right =
+        [ for row in [ 0 .. ((contraption |> rows) - 1) ] do
+              yield
+                  { Position = { X = 0; Y = row }
+                    Direction = Right } ]
+
+    let left =
+        [ for row in [ 0 .. ((contraption |> rows) - 1) ] do
+              yield
+                  { Position =
+                      { X = ((contraption |> columns) - 1)
+                        Y = row }
+                    Direction = Left } ]
+
+    let down =
+        [ for column in [ 0 .. ((contraption |> columns) - 1) ] do
+              yield
+                  { Position = { X = column; Y = 0 }
+                    Direction = Down } ]
+
+    let up =
+        [ for column in [ 0 .. ((contraption |> columns) - 1) ] do
+              yield
+                  { Position =
+                      { X = column
+                        Y = ((contraption |> rows) - 1) }
+                    Direction = Up } ]
+
+    right @ left @ up @ down
 
 let nextPosition (move: Move) : Position =
     match move.Direction with
@@ -126,11 +162,6 @@ let energize (initial: Move) (contraption: char[,]) : Map<Move, char> =
         && position.X < (contraption |> rows)
         && position.Y < (contraption |> columns)
 
-    let tailIfMultipleElements lst =
-        match lst with
-        | [] -> [] // Empty list
-        | _ :: rest -> rest
-
     let rec light (currentMoves: Move list) (currentEnergized: Map<Move, char>) : Map<Move, char> =
         if currentMoves.Length = 0 then
             currentEnergized
@@ -159,6 +190,23 @@ let normalize (energized: Map<Move, char>) : Position list =
     |> Seq.map (fun move -> move.Position)
     |> Seq.distinct
     |> List.ofSeq
+
+let getMaxEnergizedContraption (contraption: char[,]) : int =
+    let initialMoves = contraption |> prepareInitialMoves
+
+    let rec getMax (initialMoves: Move list) (currentMax: int) =
+        if initialMoves.Length = 0 then
+            currentMax
+        else
+            let currentMove = initialMoves[0]
+            let currentValue = ((energize currentMove contraption) |> normalize).Length
+
+            if currentValue > currentMax then
+                getMax (initialMoves |> tailIfMultipleElements) currentValue
+            else
+                getMax (initialMoves |> tailIfMultipleElements) currentMax
+
+    getMax initialMoves 0
 
 let dump (contraption: char[,]) (energized: Position list) : string =
     let contraptionBuilder = StringBuilder()

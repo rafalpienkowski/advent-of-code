@@ -46,11 +46,17 @@ let ``Should count energized contraption from sample input`` () =
 
 [<Fact>]
 let ``Should count max energized contraption from sample input`` () =
-    let positions = sampleInput
-                    |> loadContraption
-                    |> energize { Position = { X = 0; Y = 0 }; Direction = Right }
-                    |> normalize
-    positions.Length |> should equal 51
+    sampleInput
+    |> loadContraption
+    |> getMaxEnergizedContraption
+    |> should equal 51
+  
+[<Fact>]
+let ``Should count max energized contraption from test input`` () =
+    File.ReadAllText("./Inputs/Day16.txt")
+    |> loadContraption
+    |> getMaxEnergizedContraption
+    |> should equal 7493
     
 [<Fact>]
 let ``Should count energized contraption from test input`` () =
