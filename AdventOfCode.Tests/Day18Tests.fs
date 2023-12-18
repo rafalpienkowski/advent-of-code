@@ -25,6 +25,7 @@ let ``Should dig from sample input`` () =
     sampleInput
     |> parseDigPlan
     |> digByPlan
+    |> closeUp
     |> positionsToDigResult
     |> dump
     |> should equal @"#######
@@ -38,3 +39,44 @@ let ``Should dig from sample input`` () =
 .#....#
 .######"
     
+[<Fact>]
+let ``Should dig out interior from sample input`` () =
+    sampleInput
+    |> parseDigPlan
+    |> digByPlan
+    |> closeUp
+    |> fillHoles
+    |> positionsToDigResult
+    |> dump
+    |> should equal @"#######
+#######
+#######
+..#####
+..#####
+#######
+#####..
+#######
+.######
+.######"
+    
+[<Fact>]
+let ``Should calculate dig meters`` () =
+    sampleInput
+    |> parseDigPlan
+    |> digByPlan
+    |> fillHoles
+    |> closeUp
+    |> countMeters
+    |> should equal 62
+    
+[<Fact>]
+let ``Should calculate dig meters for test input`` () =
+    let tmp =File.ReadAllText("./Inputs/Day18.txt")
+                |> parseDigPlan
+                |> digByPlan
+                |> closeUp
+                //|> fillHoles
+                |> positionsToDigResult
+                |> dump
+    
+    tmp |> should equal ""
