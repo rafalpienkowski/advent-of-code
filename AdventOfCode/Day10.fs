@@ -161,8 +161,6 @@ let getLoop (maze: char [,]) : Position list =
 
             match next with
             | Some nextDir ->
-                if currentPosition.X = 7 && currentPosition.Y = 4 then
-                    false |> ignore
                 let currentPipe = getPipeFromMaze currentPosition maze
                 if currentPipe.IsSome && currentPipe.Value <> '.' then
                     loop <- loop @ [ currentPosition ]
@@ -171,6 +169,7 @@ let getLoop (maze: char [,]) : Position list =
             | None ->
                 if nextPipe.IsSome && nextPipe.Value = 'S' then
                     isLoop <- true
+                    loop <- loop @ [ currentPosition ]
 
                 finished <- true
         
@@ -188,8 +187,6 @@ let getLoop (maze: char [,]) : Position list =
         | Some _ -> idx <- 4
     
     loop.Value
-
-    
  
 let checkNestDirections (maze: char[,]) (position: Position) (loop: Position list): bool =
     let directions =
@@ -239,25 +236,20 @@ let printLoop (maze: char[,]) (loop: Position list): unit =
             if loop |> List.contains position then
                 Console.Write "X"
             else
-                if position.X = 4 && position.Y = 7 then
-                    Console.Write "O"
-                else
-                    Console.Write "-"
+                Console.Write "-"
         Console.WriteLine ""
 
 let calculateNestCount (input: string) : int =
     let maze = input |> parseMaze
     let rows = mazeRows maze
     let cols = mazeCols maze
-    let loop = getLoop maze
+    let loop = (getLoop maze) |> List.distinct
     printLoop maze loop
     let mutable nest = 0
-
+    
     for row in [ 0 .. rows - 1 ] do
         for col in [ 0 .. cols - 1 ] do
             let position = { X = row; Y = col }
-            if position.X = 4 && position.Y = 7 then
-                false |> ignore
             if not (loop |> List.contains position) then
                 let symbol  = getPipeFromMaze position maze
                 if symbol.IsSome && isNotPipe symbol.Value then
@@ -265,3 +257,4 @@ let calculateNestCount (input: string) : int =
                         nest <- nest + 1
 
     nest
+

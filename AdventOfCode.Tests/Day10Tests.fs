@@ -35,22 +35,7 @@ let ``Should count the longest pipe length for input`` () =
     |> countLongestLength
     |> should equal 6773
 
-let simpleLoop = @"............
-..S-------7.
-..|F-----7|.
-..||.....||.
-..||.....||.
-..|L-7.F-J|.
-..|..|.|..|.
-..L--J.L--J.
-............"
-
-let ``Should calculate nest count in simple loop`` () =
-    simpleLoop
-    |> calculateNestCount
-    |> should equal 4
-    
-let simpleLoop2 = @"..........
+let simpleLoop = @"..........
 .S------7.
 .|F----7|.
 .||....||.
@@ -60,8 +45,9 @@ let simpleLoop2 = @"..........
 .L--JL--J.
 .........."
     
-let ``Should calculate nest count in simple loop 2`` () =
-    simpleLoop2
+[<Fact>]
+let ``Should calculate nest count in simple loop`` () =
+    simpleLoop
     |> calculateNestCount
     |> should equal 4
 
@@ -76,6 +62,7 @@ L--J.L7...LJS7F-7L7.
 ....FJL-7.||.||||...
 ....L---J.LJ.LJLJ..."
 
+[<Fact>]
 let ``Should calculate nest count in complex loop `` () =
     complexLoop
     |> calculateNestCount
