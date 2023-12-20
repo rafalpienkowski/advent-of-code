@@ -63,4 +63,4 @@ let ``Should determine which accepted workflows and returns sum of parts`` () =
 [<Fact>]
 let ``Should calculate sum of parts for test input`` () =
     let workflows, parts = File.ReadAllText("./Inputs/Day19.txt") |> parseInput
-    (processParts workflows parts) |> List.sum |> should equal 19114
+    (processParts workflows parts) |> List.sum |> should equal 389114
