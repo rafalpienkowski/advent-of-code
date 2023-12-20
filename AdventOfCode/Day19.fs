@@ -123,3 +123,6 @@ let processParts (workflows: Workflow list) (parts: Part list) : int list =
                 processParts (parts |> List.tail) results
 
     processParts parts List.empty
+
+let takeCombinations (workflows: Workflow list) : Int64 =
+    0L

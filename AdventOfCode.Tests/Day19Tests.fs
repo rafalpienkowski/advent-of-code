@@ -64,3 +64,10 @@ let ``Should determine which accepted workflows and returns sum of parts`` () =
 let ``Should calculate sum of parts for test input`` () =
     let workflows, parts = File.ReadAllText("./Inputs/Day19.txt") |> parseInput
     (processParts workflows parts) |> List.sum |> should equal 389114
+
+[<Fact>]
+let ``Should calculate distinct combinations for sample input`` () =
+    let workflows, _ = sampleInput |> parseInput
+    workflows
+    |> takeCombinations
+    |> should equal 167409079868000L
