@@ -1,5 +1,6 @@
 module ``day 19 tests``
 
+open System
 open System.IO
 open AdventOfCode.Day19
 open Xunit
@@ -66,8 +67,18 @@ let ``Should calculate sum of parts for test input`` () =
     (processParts workflows parts) |> List.sum |> should equal 389114
 
 [<Fact>]
-let ``Should calculate distinct combinations for sample input`` () =
+let ``Should take paths for sample input`` () =
     let workflows, _ = sampleInput |> parseInput
     workflows
     |> takeCombinations
+    |> calculateCombinations
+    |> should equal 167409079868000L
+    
+    
+[<Fact>]
+let ``Should take paths for test data`` () =
+    let workflows, _ = File.ReadAllText("./Inputs/Day19.txt") |> parseInput
+    workflows
+    |> takeCombinations
+    |> calculateCombinations
     |> should equal 167409079868000L

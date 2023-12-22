@@ -124,5 +124,107 @@ let processParts (workflows: Workflow list) (parts: Part list) : int list =
 
     processParts parts List.empty
 
-let takeCombinations (workflows: Workflow list) : Int64 =
-    0L
+type RatingRange = { Min: int; Max: int }
+
+type PartRange = Map<char, RatingRange>
+
+let takeCombinations (workflows: Workflow list) : PartRange list =
+    let initialPart =
+        Map.empty
+        |> Map.add 'a' { Min = 1; Max = 4000 }
+        |> Map.add 'm' { Min = 1; Max = 4000 }
+        |> Map.add 's' { Min = 1; Max = 4000 }
+        |> Map.add 'x' { Min = 1; Max = 4000 }
+
+    let workflowsMap =
+        workflows
+        |> List.fold (fun acc (name, rules) -> Map.add name rules acc) Map.empty<string, Rule list>
+
+    let rec takePaths
+        (part: PartRange)
+        (rules: Rule list)
+        (outgoingParts: (string * PartRange) list)
+        : (string * PartRange) list =
+        let rule = rules[0]
+
+        if rule.PartType = ' ' then
+            outgoingParts @ [ (rule.Destination, part) ]
+        else
+            let partValue = part[rule.PartType]
+
+            let splitPartRange =
+                partValue.Min < rule.Threshold && partValue.Max > rule.Threshold
+
+            if splitPartRange then
+                if rule.Operator = '<' then
+                    let down =
+                        { Min = partValue.Min
+                          Max = rule.Threshold - 1}
+                    let up =
+                        { Min = rule.Threshold
+                          Max = partValue.Max }
+                    
+                    let newOutgoingPart = part |> Map.add rule.PartType down
+                    let newPart = part |> Map.add rule.PartType up
+                    let newOutgoingParts = outgoingParts @ [ (rule.Destination, newOutgoingPart) ]
+                    takePaths newPart (rules |> List.tail) newOutgoingParts
+                else
+                    let down =
+                        { Min = partValue.Min
+                          Max = rule.Threshold}
+                    let up =
+                        { Min = rule.Threshold + 1
+                          Max = partValue.Max }
+                    
+                    let newOutgoingPart = part |> Map.add rule.PartType up
+                    let newPart = part |> Map.add rule.PartType down
+                    let newOutgoingParts = outgoingParts @ [ (rule.Destination, newOutgoingPart) ]
+                    takePaths newPart (rules |> List.tail) newOutgoingParts
+            else if rule.Operator = '<' && partValue.Max < rule.Threshold then
+                outgoingParts @ [ (rule.Destination, part) ]
+            elif rule.Operator = '>' && partValue.Min > rule.Threshold then
+                outgoingParts @ [ (rule.Destination, part) ]
+            else
+                takePaths part (rules |> List.tail) outgoingParts
+
+
+    let rec combinations (parts: (string * PartRange) list) (outcome: PartRange list) : PartRange list =
+        if parts.Length = 0 then
+            outcome
+        else
+            let part = parts[0]
+            let workflowName = fst part
+            let workflow = workflowsMap[workflowName]
+            let operationResults = takePaths (snd part) workflow List.empty
+
+            let accepted =
+                operationResults |> List.filter (fun result -> fst result = "A") |> List.map snd
+
+            let notFinished =
+                operationResults
+                |> List.filter (fun result -> fst result <> "A" && fst result <> "R")
+
+            let newOutcome = outcome @ accepted
+            let newParts = (parts |> List.tail) @ notFinished
+
+            combinations newParts newOutcome
+
+    combinations [ ("in", initialPart) ] List.empty
+
+
+let calculateCombinations (parts: PartRange list) : Int64 =
+
+    let rec addPartRange (p: PartRange list) (current: Int64) : Int64 =
+        if p.Length = 0 then
+            current
+        else
+            let currentRange = p[0]
+
+            let combinations =
+                [ for r in currentRange.Values do
+                      yield r.Max - r.Min + 1]
+                |> List.fold (fun acc value -> int64 value * acc) 1L
+
+            addPartRange (p |> List.tail) (current + combinations)
+
+    addPartRange parts 0L
