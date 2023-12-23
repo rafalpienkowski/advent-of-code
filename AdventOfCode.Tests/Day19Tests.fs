@@ -1,6 +1,5 @@
 module ``day 19 tests``
 
-open System
 open System.IO
 open AdventOfCode.Day19
 open Xunit
