@@ -7,6 +7,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "AdventOfCode.2023", "Advent
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "AdventOfCode.2023.Tests", "AdventOfCode.2023.Tests\AdventOfCode.2023.Tests.fsproj", "{0E58AC46-1900-4EA4-ADFA-A9B9F214BEDD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2023", "2023", "{7747D275-C373-4B13-9427-2F88AEC15495}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{0E58AC46-1900-4EA4-ADFA-A9B9F214BEDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E58AC46-1900-4EA4-ADFA-A9B9F214BEDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E58AC46-1900-4EA4-ADFA-A9B9F214BEDD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D6C1889F-9867-430D-A2D9-36888A7F9106} = {7747D275-C373-4B13-9427-2F88AEC15495}
+		{0E58AC46-1900-4EA4-ADFA-A9B9F214BEDD} = {7747D275-C373-4B13-9427-2F88AEC15495}
 	EndGlobalSection
 EndGlobal
