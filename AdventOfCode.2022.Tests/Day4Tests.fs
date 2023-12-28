@@ -27,3 +27,19 @@ let ``calculate fully contained pairs for test input`` () =
     |> findFullyContained
     |> List.length
     |> should equal 507
+
+[<Fact>]
+let ``calculate overlapping pairs for sample input`` () =
+    sampleInput
+    |> toSections
+    |> findOverlapping
+    |> List.length
+    |> should equal 4
+
+[<Fact>]
+let ``calculate overlapping pairs for test input`` () =
+    File.ReadAllText("./Inputs/Day4.txt")
+    |> toSections
+    |> findOverlapping
+    |> List.length
+    |> should equal 897

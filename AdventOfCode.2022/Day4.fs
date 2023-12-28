@@ -24,3 +24,11 @@ let findFullyContained (sections: Section list) : Section list =
         || (section.Right.Down <= section.Left.Down && section.Right.Up >= section.Left.Up)
 
     sections |> List.filter isFullyContained
+
+let findOverlapping (sections: Section list) : Section list =
+    
+    let overlaps (section: Section) : bool =
+        (section.Left.Down >= section.Right.Down && section.Left.Down <= section.Right.Up)
+        || (section.Right.Down >= section.Left.Down && section.Right.Down <= section.Left.Up)
+    
+    sections |> List.filter overlaps
