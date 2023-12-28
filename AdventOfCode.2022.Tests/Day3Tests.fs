@@ -20,7 +20,6 @@ let ``calculate priority for sample input`` () =
     |> sumItems
     |> should equal 157
     
-    
 [<Fact>]
 let ``calculate priority for test input`` () =
     File.ReadAllText("./Inputs/Day3.txt")
@@ -28,3 +27,16 @@ let ``calculate priority for test input`` () =
     |> findItems
     |> sumItems
     |> should equal 8240
+
+[<Fact>]
+let ``get badge for elf group for sample input`` () =
+    sampleInput
+    |> getGroupBadge
+    |> should equal 70
+    
+    
+[<Fact>]
+let ``get badge for elf group for test input`` () =
+    File.ReadAllText("./Inputs/Day3.txt")
+    |> getGroupBadge
+    |> should equal 2587
