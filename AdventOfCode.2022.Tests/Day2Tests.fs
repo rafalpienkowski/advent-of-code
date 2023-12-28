@@ -12,14 +12,27 @@ C Z"
 [<Fact>]
 let ``calculate calculate total score from sample input`` () =
     sampleInput
-    |> loadStrategyGuide
+    |> loadStrategy
     |> calculateSum
     |> should equal 15
-    
     
 [<Fact>]
 let ``calculate calculate total score from test input`` () =
     File.ReadAllText("./Inputs/Day2.txt")
-    |> loadStrategyGuide
+    |> loadStrategy
     |> calculateSum
     |> should equal 13484
+
+[<Fact>]
+let ``calculate calculate strategy score from sample input`` () =
+    sampleInput
+    |> loadGuides
+    |> calculateStrategy
+    |> should equal 12
+    
+[<Fact>]
+let ``calculate calculate strategy score from test input`` () =
+    File.ReadAllText("./Inputs/Day2.txt")
+    |> loadGuides
+    |> calculateStrategy
+    |> should equal 13433
