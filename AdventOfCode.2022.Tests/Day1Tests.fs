@@ -1,9 +1,7 @@
 module ``day 1 should``
 
-open System
 open Xunit
 open System.IO
-open Xunit
 open FsUnit.Xunit
 open AdventOfCode2022.Day1
 
