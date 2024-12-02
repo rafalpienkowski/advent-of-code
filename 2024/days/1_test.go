@@ -17,7 +17,7 @@ func abs(x int) int {
 	return x
 }
 
-func getData() ([]int, []int) {
+func getDataDay1() ([]int, []int) {
 	lines := ReadLines("../inputs/1a.txt")
 
     var left []int
@@ -42,7 +42,7 @@ func getData() ([]int, []int) {
 func Test_Day_1_A(t *testing.T) {
     diff := 0
 
-    left, right := getData()
+    left, right := getDataDay1()
     sort.Ints(left)
     sort.Ints(right)
 
@@ -57,7 +57,7 @@ func Test_Day_1_A(t *testing.T) {
 func Test_Day_1_B(t *testing.T) {
     similarity := 0
 
-    left, right := getData()
+    left, right := getDataDay1()
     counts := make(map[int]int)
 
     for _, num := range right {
@@ -68,5 +68,5 @@ func Test_Day_1_B(t *testing.T) {
         similarity += left[idx] * counts[left[idx]]
     }
 
-	assert.EqualValues(t, 2166959, similarity)
+	assert.EqualValues(t, 23741109, similarity)
 }
