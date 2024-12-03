@@ -14,7 +14,7 @@ func getDataDay3() []string {
 	return lines
 }
 
-func Day_3_A(t *testing.T) {
+func Test_Day_3_A(t *testing.T) {
 	data := getDataDay3()
 	result := 0
 
