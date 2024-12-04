@@ -1,7 +1,6 @@
 package days
 
 import (
-	"fmt"
 	"regexp"
 	"strconv"
 	"testing"
@@ -23,7 +22,6 @@ func Test_Day_3_A(t *testing.T) {
 	for _, line := range data {
 
 		matches := re.FindAllString(line, -1)
-		fmt.Println(matches)
 
 		for _, match := range matches {
 			matches2 := re2.FindAllString(match, -1)
@@ -33,7 +31,7 @@ func Test_Day_3_A(t *testing.T) {
 		}
 	}
 
-	assert.EqualValues(t, 161, result)
+	assert.EqualValues(t, 179571322, result)
 }
 
 func Test_Day_3_B(t *testing.T) {
@@ -67,5 +65,5 @@ func Test_Day_3_B(t *testing.T) {
 		}
 	}
 
-	assert.EqualValues(t, 48, result)
+	assert.EqualValues(t, 103811193, result)
 }
