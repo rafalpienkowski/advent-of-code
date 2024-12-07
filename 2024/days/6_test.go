@@ -180,7 +180,7 @@ func print(lab Graph) {
 	}
 }
 
-func Test_Day_6(t *testing.T) {
+func Day_6(t *testing.T) {
 
 	data, start := getDataDay6()
 	lab := createGraph(data)
