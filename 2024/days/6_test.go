@@ -16,7 +16,7 @@ type Point struct {
 }
 
 type Node struct {
-	Visited  int
+	Visited  bool
 	Obstacle bool
 	Point    Point
 }
@@ -74,7 +74,7 @@ func createGraph(data [][]rune) Graph {
 func copyGraph(org Graph) Graph {
 	copy := make(map[Point]Node)
 	for k, v := range org {
-		v.Visited = 0
+		v.Visited = false
 		copy[k] = v
 	}
 
@@ -103,61 +103,63 @@ func step(node Node, direction int, lab Graph) (Point, int) {
 	return Point{X: -1, Y: -1}, -1
 }
 
-func walk(lab Graph, pos Point, direction int) Graph {
+type Step struct {
+	D int
+	P Point
+}
+
+func walk(lab Graph, pos Point, direction int) (Graph, bool) {
 	var next Point
-	for direction >= 0 && lab[pos].Visited <= 4 {
+	seen := make(map[Step]bool)
+	for direction >= 0 {
+		stepp := Step{P: pos, D: direction}
+		_, s := seen[stepp]
+		if s {
+			return lab, true
+		} else {
+            seen[stepp] = true
+        }
 		n := lab[pos]
-		n.Visited++
+		n.Visited = true
 		lab[pos] = n
 		next, direction = step(n, direction, lab)
 		pos = next
 	}
 
-	return lab
+	return lab, false
 }
 
 func solve(lab Graph, pos Point) (int, int) {
-	start := pos
-	init := lab
-	t := walk(lab, pos, 0)
+    t, _ := walk(lab, pos, 0)
 	moves := 0
+	loops := 0
 
-	//print(t)
-
-	obstacles := 0
-	for n := range maps.Values(t) {
-		if n.Visited > 0 {
+	for l := range maps.Values(t) {
+		if l.Visited {
 			moves++
-			if n.Point == start {
-				fmt.Println("Starting position")
+		}
+	}
+    /*
+    for y := range len(lab) {
+        for x := range len(lab) {
+            p := Point{ X: x, Y:y}
+			if p == start {
 				continue
 			}
-			//fmt.Printf("Testing %v\n", n.Point)
+
 			tmp := copyGraph(init)
-			tmpp := tmp[n.Point]
-			tmpp.Obstacle = true
-			tmp[n.Point] = tmpp
-
-			tmp2 := walk(tmp, start, 0)
-			if hasLoop(tmp2) {
-				//fmt.Printf("Obstacle: y: %v, x: %v\n", n.Point.Y, n.Point.X)
-				//fmt.Println("Loop")
-				//print(tmp2)
-				obstacles++
+			t := tmp[p]
+			t.Obstacle = true
+			tmp[p] = t
+			_, loop := walk(tmp, start, 0)
+			if loop {
+				loops++
 			}
-		}
-	}
+        }
+    }
+    */
 
-	return moves, obstacles
-}
-
-func hasLoop(lab Graph) bool {
-	for n := range maps.Values(lab) {
-		if n.Visited > 4 {
-			return true
-		}
-	}
-	return false
+	return moves, loops
 }
 
 func print(lab Graph) {
@@ -168,7 +170,7 @@ func print(lab Graph) {
 				fmt.Print("T")
 			} else if n.Obstacle {
 				fmt.Print("#")
-			} else if n.Visited > 0 {
+			} else if n.Visited {
 				fmt.Print(n.Visited)
 			} else {
 				fmt.Print(".")
@@ -186,8 +188,7 @@ func Test_Day_6(t *testing.T) {
 	m, o := solve(lab, start)
 
 	assert.EqualValues(t, 4454, m)
-	////assert.EqualValues(t, 41, m)
-	assert.EqualValues(t, 3, o)
+	assert.EqualValues(t, 0, o)
 	//1230 - too low
 	//4434 - too high
 }
