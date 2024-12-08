@@ -64,7 +64,7 @@ func generateCombinations(options []string, length int) [][]string {
 	return combinations
 }
 
-func Test_Day_7(t *testing.T) {
+func Day_7(t *testing.T) {
 	data := getDataDay7()
 	//ans1 := 0
 	ans2 := 0

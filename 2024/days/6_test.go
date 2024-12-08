@@ -85,6 +85,10 @@ func (p *Point) Add(other Point) Point {
 	return Point{X: p.X + other.X, Y: p.Y + other.Y}
 }
 
+func (p *Point) Sub(other Point) Point {
+	return Point{X: p.X - other.X, Y: p.Y - other.Y}
+}
+
 func step(node Node, direction int, lab Graph) (Point, int) {
 	next := node.Point.Add(directions[direction])
 	if next.X < 0 || next.X >= max || next.Y < 0 || next.Y >= max {
