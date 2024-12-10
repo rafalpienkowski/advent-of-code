@@ -59,7 +59,7 @@ func (p *Point) InGrid(maxx int, maxy int) bool {
 	return p.X >= 0 && p.Y >= 0 && p.X < maxx && p.Y < maxy
 }
 
-func Test_Day_8(t *testing.T) {
+func Day_8(t *testing.T) {
 	city := getDataDay8()
 	maxy := len(city)
 	maxx := len(city[0])
