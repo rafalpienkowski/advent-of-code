@@ -4,9 +4,12 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func getDataDay9() []rune {
@@ -106,11 +109,24 @@ func findNonFreeIdx(loc []DiskLoc, size int) int {
 	return -1
 }
 
-func checkSum2(memory []rune) int {
+func printLoc(input []DiskLoc) {
 	disk := strings.Builder{}
+	for _, i := range input {
+		if i.Free {
+			for j := 0; j < i.Size; j++ {
+				disk.WriteString(".")
+			}
+		} else {
+			for j := 0; j < i.Size; j++ {
+				disk.WriteString(fmt.Sprintf("%v", i.Value))
+			}
+		}
+	}
+	fmt.Printf("%v\n", disk.String())
+}
+
+func checkSum2(memory []rune) int {
 	var input []DiskLoc
-	var final []DiskLoc
-	d := make(map[int][]DiskLoc)
 
 	idx := 0
 	for i := 0; i < len(memory); i++ {
@@ -128,66 +144,65 @@ func checkSum2(memory []rune) int {
 		input = append(input, l)
 	}
 
-	s := len(input) - 1
-	for i := s; i >= 0; i-- {
-		curr := input[i]
-		if curr.Free {
+	printLoc(input)
+
+	for i := len(input) - 1; i > 0; i-- {
+		if input[i].Free {
 			continue
 		}
-        d[curr.Size] = append(d[curr.Size], curr)
-	}
+		for j := 0; j < i; j++ {
+			if !input[j].Free {
+				continue
+			}
 
-    fmt.Printf("D: %v\n", d)
+			if input[i].Size <= input[j].Size {
 
-	for i := s; i >= 0; i-- {
-		j := s - i
-		begin := input[j]
-		if !begin.Free {
-			final = append(final, begin)
-			continue
-		}
 
-		fi := findNonFreeIdx(input, begin.Size)
-		if fi > 0 {
-			tmp := input[fi]
-			final = append(final, tmp)
+				right := input[i]
+				left := input[j]
+				//fmt.Printf("Swapping: %v with %v\n", right, left)
+				//fmt.Printf("Swapping: %v with %v\n", i, j)
 
-			tmp.Free = true
-			tmp.Value = 0
-			input[fi] = tmp
-			begin.Size = begin.Size - tmp.Size
-		}
+				gap := left.Size - right.Size
+				input[j] = right
+				left.Size = right.Size
+				input[i] = left
 
-		if begin.Size > 0 {
-			final = append(final, begin)
-		}
+				//gap
+				if gap > 0 {
+					g := DiskLoc{Free: true, Value: 0, Size: gap}
+					input = slices.Insert(input, j+1, g)
+				}
 
-	}
-
-	disk = strings.Builder{}
-	fmt.Printf("Final:\n")
-	for _, f := range final {
-		for s := 0; s < f.Size; s++ {
-			if f.Free {
-				disk.WriteString(".")
-			} else {
-				disk.WriteString(fmt.Sprintf("%v", f.Value))
+				printLoc(input)
+				break
 			}
 		}
 	}
-	fmt.Println(disk.String())
-	//0099.111777244.3332...5555.6666.333.8888..
-	//00992111777.44.333....5555.6666.....8888..
+
+	fmt.Println()
+	printLoc(input)
 
 	sum := 0
+
+	idx = 0
+	for i := range input {
+		for j := 0; j < input[i].Size; j++ {
+			sum += idx * input[i].Value
+			idx++
+		}
+	}
+
 	return sum
 }
 
-func Test_Day_9(t *testing.T) {
-	//getDataDay9()
+func Day_9(t *testing.T) {
+	mem := getDataDay9()
 	//result := checkSum(mem)
-	//checkSum2(mem)
+	result2 := checkSum2(mem)
 
 	//assert.EqualValues(t, 6337367222422, result)
-	//assert.EqualValues(t, 2858, result2)
+	assert.EqualValues(t, 2857, result2)
+
+	//6421320153831 -- to high
 }
