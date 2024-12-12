@@ -60,7 +60,7 @@ func sumData(data map[int]int) int {
 	return sum
 }
 
-func Test_Day_11(t *testing.T) {
+func Day_11(t *testing.T) {
 	data := getDataDay11()
 
 	idx := make(map[int]int)
