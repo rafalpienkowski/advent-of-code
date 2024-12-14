@@ -1,6 +1,7 @@
 package days
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -8,7 +9,7 @@ import (
 
 func getDataDay12() map[Point]Plot {
 
-	lines := ReadLines("../inputs/12a.txt")
+	lines := ReadLines("../inputs/12.txt")
 	data := make(map[Point]Plot)
 
 	for y := range len(lines) {
@@ -76,8 +77,10 @@ func calculate(input map[Point]Plot) (int, int) {
 		perimeter := calcPerimeter(check)
 		result += len(check) * perimeter
 
-		slides := calcDiscount(check)
-		discount += len(check) * slides
+		if p.Value == "R" {
+			slides := calcDiscount(check)
+			discount += len(check) * slides
+		}
 	}
 
 	return result, discount
@@ -93,7 +96,7 @@ type PairPoint struct {
 }
 
 func calcDiscount(points map[Point]bool) int {
-	//fmt.Printf("input %v\n", points)
+	fmt.Printf("input %v\n", points)
 
 	tmp := make(map[PairPoint]bool)
 	kept := make(map[PairPoint]bool)
@@ -107,7 +110,7 @@ func calcDiscount(points map[Point]bool) int {
 			}
 		}
 	}
-	//fmt.Printf("PairPoint %v\n", tmp)
+	fmt.Printf("PairPoint %v\n", tmp)
 	for k := range tmp {
 		keep := true
 		for _, d := range directions2 {
@@ -121,8 +124,8 @@ func calcDiscount(points map[Point]bool) int {
 			kept[k] = true
 		}
 	}
-	//fmt.Printf("len %v\n", len(kept))
-	//fmt.Printf("kept %v\n", kept)
+	fmt.Printf("len %v\n", len(kept))
+	fmt.Printf("kept %v\n", kept)
 
 	return len(kept)
 }
@@ -146,9 +149,9 @@ func Day_12(t *testing.T) {
 	plots := getDataDay12()
 	result1, result2 := calculate(plots)
 
-	//assert.EqualValues(t, 1930, result1)
-	assert.EqualValues(t, 1450816, result1)
-	//assert.EqualValues(t, 1206, result2)
-	assert.EqualValues(t, 865662, result2)
+	assert.EqualValues(t, 1930, result1)
+	//assert.EqualValues(t, 1450816, result1)
+	assert.EqualValues(t, 1206, result2)
+	//assert.EqualValues(t, 865662, result2)
 
 }
