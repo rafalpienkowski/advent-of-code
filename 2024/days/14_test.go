@@ -95,6 +95,20 @@ func stepsToTree(robots []Robot) int {
             seen[r.Start] = true
 		}
         if len(seen) == len(robots) {
+            /*
+            for y := range 103 {
+                for x := range 101 {
+                    _, ok := seen[Point{X:x, Y:y}]
+                    if ok {
+                        fmt.Print("#")
+                    } else {
+                        fmt.Print(" ")
+                    }
+                }
+                fmt.Println()
+            }
+            */
+
             return i
         }
 	}
@@ -109,5 +123,4 @@ func Day_14(t *testing.T) {
 
 	assert.EqualValues(t, 228410028, result1)
 	assert.EqualValues(t, 8258, result2)
-
 }
