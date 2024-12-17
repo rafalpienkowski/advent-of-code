@@ -13,7 +13,7 @@ func getDataDay15() (map[Point]string, []Point, int, int) {
 	maxx := 0
 	maxy := 0
 
-	lines := ReadLines("../inputs/15.txt")
+	lines := ReadLines("../inputs/15b.txt")
 	for y, line := range lines {
 
 		if len(line) == 0 {
@@ -167,8 +167,14 @@ func calcMoves2(warehouse map[Point]string, moves []Point, maxx int, maxy int) i
 	}
 
 	printWarehouse(extended, 2*maxx, maxy)
+	idx := 0
 
 	for _, m := range moves {
+		if idx > 0 {
+			continue
+		}
+		idx++
+
 		fmt.Printf("Moving %v\n", m)
 		next := pos.Add(m)
 
@@ -178,31 +184,20 @@ func calcMoves2(warehouse map[Point]string, moves []Point, maxx int, maxy int) i
 			pos = next
 		}
 
-		if warehouse[next] == "O" {
+		p2m := make(map[Point]bool)
+        i := 0
+		if extended[next] == "[" || extended[next] == "]" {
 			tmp := next
-			queue := make([]Point, 0)
-			cont := true
-			skip := false
-			for cont {
-				switch warehouse[tmp] {
-				case "#":
-					cont = false
-					skip = true
-				case ".":
-					cont = false
-					queue = append(queue, tmp)
-				default:
-					queue = append(queue, tmp)
-					tmp = tmp.Add(m)
+			for i < len(p2m) {
+                p2m[tmp] = true
+				if extended[tmp] == "[" {
+					p2m[tmp.Add(Point{X: tmp.X + 1, Y: tmp.Y})] = true
 				}
-			}
-			if !skip {
-				for _, q := range queue {
-					warehouse[q] = "O"
+				if extended[tmp] == "]" {
+					p2m[tmp.Add(Point{X: tmp.X - 1, Y: tmp.Y})] = true
 				}
-				warehouse[next] = "@"
-				warehouse[pos] = "."
-				pos = next
+				tmp = tmp.Add(m)
+                i++
 			}
 		}
 
@@ -215,12 +210,12 @@ func calcMoves2(warehouse map[Point]string, moves []Point, maxx int, maxy int) i
 	return calc(warehouse, maxx, maxy)
 }
 
-func Test_Day_15(t *testing.T) {
+func Day_15(t *testing.T) {
 	warehouse, moves, maxx, maxy := getDataDay15()
-	result1 := calcMoves(warehouse, moves, maxx, maxy)
-	//result2 := calcMoves2(warehouse, moves, maxx, maxy)
+	//result1 := calcMoves(warehouse, moves, maxx, maxy)
+	result2 := calcMoves2(warehouse, moves, maxx, maxy)
 
 	//assert.EqualValues(t, 1552463, result1)
-	assert.EqualValues(t, 10092, result1)
-	//assert.EqualValues(t, 0, result2)
+	//assert.EqualValues(t, 10092, result1)
+	assert.EqualValues(t, 9021, result2)
 }

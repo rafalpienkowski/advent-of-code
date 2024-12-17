@@ -165,8 +165,8 @@ XXXXXXXXOO`
 	dsf(graph, Point{0, 0})
 
 	fmt.Println("---------")
-	escape := graph[Point{X: 9, Y: 9}]
-	fmt.Printf("Visited: %v in %v moves\n", escape.Visited, moves)
+	//graph[Point{X: 9, Y: 9}]
+	//fmt.Printf("Visited: %v in %v moves\n", escape.Visited, moves)
 
 	assert.EqualValues(t, 0, 0)
 }
