@@ -1,7 +1,6 @@
 package bonus
 
 import (
-	"fmt"
 	"math"
 	"testing"
 
@@ -55,40 +54,32 @@ func Dij(edges []Edge, start int, end int) int {
 	}
 
 	for len(Q) > 0 {
-		fmt.Printf("Q: %v\n", Q)
-		//fmt.Printf("d: %v\n", d)
-		//fmt.Printf("p: %v\n", p)
-
 		cost := math.MaxInt
 		e := -1
-		for _, q := range Q {
-			if d[q] < cost {
-				cost = d[q]
-				e = q
+		for _, v := range Q {
+			if d[v] < cost {
+				cost = d[v]
+				e = v
 			}
 		}
 		if e < 0 {
 			break
 		}
 
-		//fmt.Printf("Cost %v, e %v\n", cost, e)
 		removePos(e)
 
 		for _, n := range neighbours(e) {
-			//fmt.Printf("%v\n", n)
-			//fmt.Printf("n %v, d[n.A] %v, d[n.B] %v\n", n, d[n.A], d[n.B])
 			if d[n.B] > d[n.A]+n.W {
-				//fmt.Printf("%v > %v + %v\n", d[n.B], d[n.A], n.W)
 				d[n.B] = d[n.A] + n.W
 				p[n.B] = n.A
 			}
 		}
-	}
+    }
 
-	return 0
+	return d[end]
 }
 
-func Alg(t *testing.T) {
+func Test_Alg(t *testing.T) {
 	edges := []Edge{
 		{A: 0, B: 1, W: 3},
 		{A: 0, B: 4, W: 3},
@@ -98,10 +89,10 @@ func Alg(t *testing.T) {
 		{A: 3, B: 1, W: 3},
 		{A: 4, B: 5, W: 2},
 		{A: 5, B: 0, W: 6},
-		{A: 1, B: 3, W: 1},
+		{A: 5, B: 3, W: 1},
 	}
 
 	result := Dij(edges, 0, 3)
 
-	assert.EqualValues(t, 3, result)
+	assert.EqualValues(t, 6, result)
 }
