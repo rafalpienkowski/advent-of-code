@@ -2,6 +2,7 @@ package days
 
 import (
 	"bufio"
+	"container/heap"
 	"fmt"
 	"math"
 	"os"
@@ -34,7 +35,7 @@ type MazeStep struct {
 	Direction, Dist int
 }
 
-func adj(pd PointDir, maze [][]rune) []MazeStep {
+func adj(pd PointD, maze [][]rune) []MazeStep {
 	var adjs []MazeStep
 
 	var dirs = [4]Point{
@@ -68,19 +69,13 @@ func adj(pd PointDir, maze [][]rune) []MazeStep {
 	return adjs
 }
 
-type PointDir struct {
-	P    Point
-	D    int
-	Dist int
-}
-
 type PointD struct {
 	P Point
 	D int
 }
 
 type Item struct {
-	node     Point
+	node     PointD
 	distance int
 	index    int
 }
@@ -109,10 +104,10 @@ func (pq *PriorityQueue) Pop() interface{} {
 
 func findMinPath(maze [][]rune) (int, int) {
 	var start, end Point
+
 	dist := make(map[Point]int)
-	path := make(map[Point][]Point)
-	var queue []PointDir
-	defPoint := Point{X: -1, Y: -1}
+	paths := make(map[Point][][]Point)
+
 	for y := range maze {
 		for x := range maze[y] {
 			if maze[y][x] == '#' {
@@ -134,68 +129,43 @@ func findMinPath(maze [][]rune) (int, int) {
 		}
 	}
 
-	paths := make(map[Point][][]Point)
+	pq := &PriorityQueue{}
+	heap.Init(pq)
+
 	paths[start] = [][]Point{{start}}
+	heap.Push(pq, &Item{node: PointD{P: start, D: 0}, distance: 0})
 
-	queue = append(queue, PointDir{P: start, D: 0, Dist: 0})
+	for pq.Len() > 0 {
+		current := heap.Pop(pq).(*Item)
+		currentNode := current.node
+		currentDist := current.distance
 
-	findMin := func() PointDir {
-		tmp := PointDir{P: defPoint, D: 0, Dist: math.MaxInt}
-		for _, pd := range queue {
-			if pd.Dist < tmp.Dist {
-				tmp = pd
-			}
+		if currentDist > dist[currentNode.P] {
+			continue
 		}
 
-		return tmp
-	}
-
-	remove := func(pd PointDir) []PointDir {
-		var tmp []PointDir
-
-		for _, p := range queue {
-			if p == pd {
-				continue
-			}
-
-			tmp = append(tmp, p)
-		}
-
-		return tmp
-	}
-
-	for len(queue) > 0 {
-		curr := findMin()
-		queue = remove(curr)
-
-		for _, a := range adj(curr, maze) {
-
-			if dist[a.From]+a.Dist < dist[a.To] {
-				dist[a.To] = dist[a.From] + a.Dist
-				queue = append(queue, PointDir{P: a.To, D: a.Direction, Dist: dist[a.To]})
-
+		for _, a := range adj(currentNode, maze) {
+			newDist := currentDist + a.Dist
+			if dist[a.To] > newDist {
+				dist[a.To] = newDist
 				paths[a.To] = [][]Point{}
-				for _, pat := range paths[curr.P] {
-					newPath := append([]Point{}, pat...)
+				for _, path := range paths[currentNode.P] {
+					newPath := append([]Point{}, path...)
 					paths[a.To] = append(paths[a.To], append(newPath, a.To))
 				}
-
-				path[a.To] = append(path[a.To], a.From)
-			} else if dist[a.From]+a.Dist == dist[a.To] {
-				path[a.To] = append(path[a.To], a.From)
-
-				for _, pat := range paths[curr.P] {
-					newPath := append([]Point{}, pat...)
+				heap.Push(pq, &Item{node: PointD{P: a.To, D: a.Direction}, distance: newDist})
+			} else if newDist == dist[a.To] {
+				for _, path := range paths[currentNode.P] {
+					newPath := append([]Point{}, path...)
 					paths[a.To] = append(paths[a.To], append(newPath, a.To))
 				}
 			}
 		}
 	}
 
-	fmt.Printf("Paths: %v\n", paths[end])
+	fmt.Printf("Paths: %v\n", len(paths[end][0]))
 
 	res := make(map[Point]bool)
-
 	return dist[end], len(res)
 }
 
@@ -206,7 +176,7 @@ func printMaze(maze [][]rune) {
 	fmt.Println()
 }
 
-func Test_Day_16(t *testing.T) {
+func Day_16(t *testing.T) {
 	maze := getDataDay16()
 	printMaze(maze)
 	result1, result2 := findMinPath(maze)
