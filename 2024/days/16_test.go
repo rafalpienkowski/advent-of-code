@@ -3,6 +3,7 @@ package days
 import (
 	"bufio"
 	"fmt"
+	"math"
 	"os"
 	"testing"
 
@@ -28,80 +29,113 @@ func getDataDay16() [][]rune {
 	return maze
 }
 
-/*
-func findMinPath(maze Maze, start Point) int {
-	//direction := Point{X: 1, Y: 0}
-	p := maze[start]
-	maze[start] = p
-
-	queue := []PointWeigh{{P: start, W: 0}}
-
-	for len(queue) > 0 {
-		c := queue[0]
-		queue = queue[1:]
-		p = maze[c.P]
-		if p.End {
-            return c.W
-		}
-		for _, n := range p.Available {
-			queue = append(queue, PointWeigh{P: n, W: c.W + 1})
-		}
-	}
-
-	return -1
-}
-*/
-
 type MazeStep struct {
-	P    Point
-	D, L int
+	From, To          Point
+	Direction, Dist int
 }
 
-func adj(step MazeStep, maze [][]rune) []MazeStep {
+func adj(pd PointDir, maze [][]rune) []MazeStep {
 	var adjs []MazeStep
 
-    /*
 	var dirs = [4]Point{
 		{X: 1, Y: 0},
 		{X: 0, Y: -1},
 		{X: -1, Y: 0},
 		{X: 0, Y: 1},
 	}
-    */
+
+	dir := dirs[pd.D]
+	next := pd.P.Add(dir)
+	if maze[next.Y][next.X] != '#' {
+		nextStep := MazeStep{From: pd.P, To: next, Direction: pd.D, Dist: 1}
+		adjs = append(adjs, nextStep)
+	}
+
+	dir = dirs[(pd.D+1)%4]
+	next = pd.P.Add(dir)
+	if maze[next.Y][next.X] != '#' {
+		nextStep := MazeStep{From: pd.P, To: next, Direction: (pd.D + 1) % 4, Dist: 1000}
+		adjs = append(adjs, nextStep)
+	}
+
+	dir = dirs[(pd.D+3)%4]
+	next = pd.P.Add(dir)
+	if maze[next.Y][next.X] != '#' {
+		nextStep := MazeStep{From: pd.P, To: next, Direction: (pd.D + 3) % 4, Dist: 1000}
+		adjs = append(adjs, nextStep)
+	}
 
 	return adjs
 }
 
+type PointDir struct {
+	P    Point
+	D    int
+	Dist int
+}
+
 func findMinPath(maze [][]rune) int {
-	var s, e Point
-	queue := make([]MazeStep, 0)
+	var start, end Point
+	dist := make(map[Point]int)
+	path := make(map[Point]Point)
+	var queue []PointDir
+	defPoint := Point{X: -1, Y: -1}
 
 	for y := range maze {
 		for x := range maze[y] {
+			if maze[y][x] == '#' {
+				continue
+			}
+
+			p := Point{X: x, Y: y}
+			path[p] = defPoint
+			dist[p] = math.MaxInt
+
 			if maze[y][x] == 'S' {
-				s = Point{X: x, Y: y}
+				dist[p] = 0
+				start = p
 				maze[y][x] = '.'
 			}
 			if maze[y][x] == 'E' {
-				e = Point{X: x, Y: y}
+				end = p
+				maze[y][x] = '.'
 			}
 		}
 	}
 
-	queue = append(queue, MazeStep{P: s, D: 0, L: 0})
-	for len(queue) > 0 {
+    queue = append(queue, PointDir{P: start, D: 0, Dist: 0})
+
+	idx := 0
+
+	//for len(queue) > 0 {
+	for idx < 15 {
+        if len(queue) == 0 {
+            fmt.Printf("End \n")
+            break
+        }
+		fmt.Println("-----------------------")
+		idx++
+		for _, v := range queue {
+			fmt.Printf("%v\n", v)
+		}
+
 		curr := queue[0]
 		queue = queue[1:]
-
-		if curr.P == e {
-			return curr.L
+		if curr.P == end {
+			fmt.Printf("Found!!!")
+            fmt.Printf("Steps: %v", idx)
+			return curr.Dist
 		}
+
 		for _, a := range adj(curr, maze) {
-			queue = append(queue, a)
+			if curr.Dist + a.Dist < dist[a.To] {
+                dist[a.To] = curr.Dist + a.Dist
+                queue = append(queue, PointDir{P: a.To, D: a.Direction, Dist: dist[a.To]})
+			}
 		}
 	}
 
-	return -1
+	return dist[end]
 }
 
 func printMaze(maze [][]rune) {
@@ -116,6 +150,5 @@ func Day_16(t *testing.T) {
 	printMaze(maze)
 	result1 := findMinPath(maze)
 
-	//assert.EqualValues(t, 7036, result1)
-	assert.EqualValues(t, 0, result1)
+	assert.EqualValues(t, 7036, result1)
 }
