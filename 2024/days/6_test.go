@@ -74,7 +74,6 @@ func createGraph(data [][]rune) Graph {
 func copyGraph(org Graph) Graph {
 	copy := make(map[Point]Node)
 	for k, v := range org {
-		v.Visited = false
 		copy[k] = v
 	}
 
@@ -98,6 +97,19 @@ func step(node Node, direction int, lab Graph) (Point, int) {
 	if !lab[next].Obstacle {
 		return next, direction
 	}
+
+	direction = (direction + 1) % 4
+	next = node.Point.Add(directions[direction])
+	if !lab[next].Obstacle {
+		return next, direction
+	}
+
+	direction = (direction + 1) % 4
+	next = node.Point.Add(directions[direction])
+	if !lab[next].Obstacle {
+		return next, direction
+	}
+
 	direction = (direction + 1) % 4
 	next = node.Point.Add(directions[direction])
 	if !lab[next].Obstacle {
@@ -133,8 +145,10 @@ func walk(lab Graph, pos Point, direction int) (Graph, bool) {
 	return lab, false
 }
 
-func solve(lab Graph, pos Point) (int, int) {
-    t, _ := walk(lab, pos, 0)
+func solve(lab Graph, start Point, maxy int, maxx int) (int, int) {
+    init := copyGraph(lab)
+    t, _ := walk(lab, start, 0)
+    firstRun := copyGraph(t)
 	moves := 0
 	loops := 0
 
@@ -143,45 +157,34 @@ func solve(lab Graph, pos Point) (int, int) {
 			moves++
 		}
 	}
-    /*
-    for y := range len(lab) {
-        for x := range len(lab) {
+
+    for y := range maxy {
+        for x := range maxx {
             p := Point{ X: x, Y:y}
+
 			if p == start {
 				continue
 			}
+            if init[p].Obstacle {
+                continue
+            }
+            if !firstRun[p].Visited {
+                continue
+            }
 
 			tmp := copyGraph(init)
 			t := tmp[p]
 			t.Obstacle = true
 			tmp[p] = t
+
 			_, loop := walk(tmp, start, 0)
 			if loop {
 				loops++
 			}
         }
     }
-    */
 
 	return moves, loops
-}
-
-func print(lab Graph) {
-	for y := range max {
-		for x := range max {
-			n, ok := lab[Point{X: x, Y: y}]
-			if !ok {
-				fmt.Print("T")
-			} else if n.Obstacle {
-				fmt.Print("#")
-			} else if n.Visited {
-				fmt.Print(n.Visited)
-			} else {
-				fmt.Print(".")
-			}
-		}
-		fmt.Println()
-	}
 }
 
 func Day_6(t *testing.T) {
@@ -189,10 +192,8 @@ func Day_6(t *testing.T) {
 	data, start := getDataDay6()
 	lab := createGraph(data)
 
-	m, o := solve(lab, start)
+	m, o := solve(lab, start, len(data), len(data[0]))
 
 	assert.EqualValues(t, 4454, m)
-	assert.EqualValues(t, 0, o)
-	//1230 - too low
-	//4434 - too high
+	assert.EqualValues(t, 1503, o)
 }
