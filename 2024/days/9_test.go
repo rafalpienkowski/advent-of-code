@@ -4,9 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"slices"
 	"strconv"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -15,7 +13,7 @@ import (
 func getDataDay9() []rune {
 	var data []rune
 
-	readFile, err := os.Open("../inputs/9.txt")
+	readFile, err := os.Open("../inputs/9a.txt")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -109,100 +107,72 @@ func findNonFreeIdx(loc []DiskLoc, size int) int {
 	return -1
 }
 
-func printLoc(input []DiskLoc) {
-	disk := strings.Builder{}
-	for _, i := range input {
-		if i.Free {
-			for j := 0; j < i.Size; j++ {
-				disk.WriteString(".")
-			}
-		} else {
-			for j := 0; j < i.Size; j++ {
-				disk.WriteString(fmt.Sprintf("%v", i.Value))
-			}
-		}
-	}
-	fmt.Printf("%v\n", disk.String())
+type Block struct {
+	Pos, Size int
 }
 
-func checkSum2(memory []rune) int {
-	var input []DiskLoc
+func checkSum3(memory []rune) int {
+	files := make(map[int]Block)
+	var blanks []Block
+	fid := 0
+	pos := 0
 
-	idx := 0
 	for i := 0; i < len(memory); i++ {
-		curr, _ := strconv.Atoi(string(memory[i]))
-		if curr == 0 {
-			continue
-		}
-		free := i%2 == 1
-		value := 0
-		if !free {
-			value = idx
-			idx++
-		}
-		l := DiskLoc{Free: free, Value: value, Size: curr}
-		input = append(input, l)
-	}
-
-	printLoc(input)
-
-	for i := len(input) - 1; i > 0; i-- {
-		if input[i].Free {
-			continue
-		}
-		for j := 0; j < i; j++ {
-			if !input[j].Free {
-				continue
-			}
-
-			if input[i].Size <= input[j].Size {
-
-
-				right := input[i]
-				left := input[j]
-				//fmt.Printf("Swapping: %v with %v\n", right, left)
-				//fmt.Printf("Swapping: %v with %v\n", i, j)
-
-				gap := left.Size - right.Size
-				input[j] = right
-				left.Size = right.Size
-				input[i] = left
-
-				//gap
-				if gap > 0 {
-					g := DiskLoc{Free: true, Value: 0, Size: gap}
-					input = slices.Insert(input, j+1, g)
-				}
-
-				printLoc(input)
-				break
+		size, _ := strconv.Atoi(string(memory[i]))
+		if i%2 == 0 {
+			files[fid] = Block{Pos: pos, Size: size}
+			fid++
+		} else {
+			if size > 0 {
+				blanks = append(blanks, Block{Pos: pos, Size: size})
 			}
 		}
+
+		pos += size
 	}
 
-	fmt.Println()
-	printLoc(input)
+    for fid > 0 {
+        fid--
+        file := files[fid]
+        for i, b := range blanks {
+            if b.Pos > file.Pos {
+                blanks = blanks[:i]
+                break
+            }
+            if file.Size <= b.Size {
+                file.Pos = b.Pos
+                files[fid] = file
+                if file.Size == b.Size {
+                    blanks = append(blanks[:i], blanks[i+1:]...)
+                } else {
+                    b.Size -= file.Size
+                    b.Pos += file.Size
+                    blanks[i] = b
+                }
+                break
+            }
+        }
+    }
 
 	sum := 0
 
-	idx = 0
-	for i := range input {
-		for j := 0; j < input[i].Size; j++ {
-			sum += idx * input[i].Value
-			idx++
-		}
-	}
+    for fid, f := range files {
+        x := f.Pos
+        e := x + f.Size
+        for x < e {
+            sum += fid * x
+            x++
+        }
+    }
 
 	return sum
 }
 
 func Day_9(t *testing.T) {
 	mem := getDataDay9()
-	//result := checkSum(mem)
-	result2 := checkSum2(mem)
+	result := checkSum(mem)
+	result2 := checkSum3(mem)
 
-	//assert.EqualValues(t, 6337367222422, result)
-	assert.EqualValues(t, 2857, result2)
-
-	//6421320153831 -- to high
+	assert.EqualValues(t, 6337367222422, result)
+	assert.EqualValues(t, 6361380647183, result2)
 }
