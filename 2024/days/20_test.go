@@ -1,7 +1,6 @@
 package days
 
 import (
-	"fmt"
 	"math"
 	"testing"
 
@@ -11,7 +10,7 @@ import (
 func getDataDay20() [][]rune {
 	maze := make([][]rune, max)
 
-	lines := ReadLines("../inputs/20a.txt")
+    lines := ReadLines("../inputs/20a.txt")
 	for _, line := range lines {
 		maze = append(maze, []rune(line))
 	}
@@ -74,7 +73,7 @@ func findMinPath20(maze [][]rune, start Point) (map[Point]int, map[Point]Point) 
 	return dists, paths
 }
 
-func solve20(maze [][]rune) int {
+func solve20(maze [][]rune) (int, int) {
 	var start, end Point
 
 	for y := range maze {
@@ -90,7 +89,8 @@ func solve20(maze [][]rune) int {
 		}
 	}
 
-	dist, paths := findMinPath20(maze, start)
+	distStart, paths := findMinPath20(maze, start)
+	distEnd, _ := findMinPath20(maze, end)
 
 	//get starting path
 	tmp := end
@@ -102,53 +102,40 @@ func solve20(maze [][]rune) int {
 		tmp = paths[tmp]
 	}
 
-	//find potential shortcuts
-	shortcuts := 0
-	seen := make(map[Point]bool)
-	for p := range startingPath {
-		for _, d := range directions {
-			next := p.Add(d)
-			//next is wall
-			if maze[next.Y][next.X] == '#' {
-				//after wall is paths
-				nextNext := next.Add(d)
-				if nextNext.Y < 0 || nextNext.X < 0 || nextNext.X >= len(maze[0]) ||
-					nextNext.Y >= len(maze) {
-					continue
-				}
-				if maze[nextNext.Y][nextNext.X] == '.' {
-					_, ok := startingPath[nextNext]
-					if ok {
-						_, was := seen[next]
-						if !was {
-							seen[next] = true
-							dist1 := dist[p]
-							dist2 := dist[nextNext]
-							save := math.Abs(float64(dist2-dist1)) - 2
-							if save >= 100 {
-								shortcuts++
-							}
-						}
-					}
+	shortcuts2 := 0
+	opt := distStart[end]
+	for ds := range distStart {
+		for de := range distEnd {
+			diff := int(math.Abs(float64(de.X-ds.X)) + math.Abs(float64(de.Y-ds.Y)))
+			if diff <= 2 {
+				if distStart[ds]+diff+distEnd[de] <= opt-100 {
+					shortcuts2++
 				}
 			}
 		}
 	}
 
-	//6781
-	fmt.Printf("Shortcuts: %v\n", shortcuts)
-	//examine shortcuts
+	shortcuts20 := 0
+	for ds := range distStart {
+		for de := range distEnd {
+			diff := int(math.Abs(float64(de.X-ds.X)) + math.Abs(float64(de.Y-ds.Y)))
+			if diff <= 20 {
+				if distStart[ds]+diff+distEnd[de] <= opt-100 {
+					shortcuts20++
+				}
+			}
+		}
+	}
 
-	return shortcuts
+
+	return shortcuts2, shortcuts20
 }
 
-func Test_Day_18(t *testing.T) {
+func Day_20(t *testing.T) {
 	maze := getDataDay20()
 	//printMaze(maze)
-	result1 := solve20(maze)
+	result1, result2 := solve20(maze)
 
 	assert.EqualValues(t, 1321, result1)
-	//assert.EqualValues(t, 22, result1)
-
-    //1289 - to low, some else
+	assert.EqualValues(t, 971737, result2)
 }
