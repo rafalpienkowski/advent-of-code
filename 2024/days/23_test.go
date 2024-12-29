@@ -1,6 +1,8 @@
 package days
 
 import (
+	"fmt"
+	"sort"
 	"strings"
 	"testing"
 
@@ -24,69 +26,68 @@ func getDataDay23() map[string][]string {
 	return lanNodes
 }
 
-func containsNode(nodes []string, element string) bool {
-	for _, v := range nodes {
-		if v == element {
+func containsString(slice []string, value string) bool {
+	for _, v := range slice {
+		if v == value {
 			return true
 		}
 	}
 	return false
 }
 
-func intersection(slice1, slice2 []string) []string {
-	elementMap := make(map[string]bool)
-	for _, v := range slice1 {
-		elementMap[v] = true
-	}
-
-	var result []string
-	for _, v := range slice2 {
-		if elementMap[v] {
-			result = append(result, v)
-			delete(elementMap, v)
-		}
-	}
-
-	return result
-}
-
-func solve23(nodes map[string][]string) int {
+func solve23(nodes map[string][]string) (int, string) {
 	result := 0
+    seen := make(map[string]bool)
+
+    for k, v := range nodes {
+        fmt.Printf("Node %v: %v\n", k, v)
+    }
 
 	for ka, a := range nodes {
 		astarts := strings.HasPrefix(ka, "t")
-		for kb, b := range nodes {
-
-			if !containsNode(a, kb) {
+		for _, b := range a {
+			if !containsString(nodes[b], ka) {
 				continue
 			}
-			if len(a) <= len(b) {
-				continue
-			}
+			bstarts := strings.HasPrefix(b, "t")
+			for _, kc := range nodes[b] {
+				cstarts := strings.HasPrefix(kc, "t")
 
-			bstarts := strings.HasPrefix(kb, "t")
+                if !containsString(nodes[kc], b) || !containsString(nodes[kc], ka) {
+                    continue
+                }
 
-			cs := intersection(a, b)
-
-			for _, c := range cs {
-				if len(c) > len(a) && len(c) > len(b) {
-					cstarts := strings.HasPrefix(c, "t")
-					if astarts || bstarts || cstarts {
-						result += 1
-					}
+                pair := [] string {ka, b, kc}
+                sort.Strings(pair)
+                normalized := strings.Join(pair, ",")
+                _, s := seen[normalized]
+				if (astarts || bstarts || cstarts) && !s {
+                    //fmt.Printf("Found %v, %v, %v\n", ka, b, kc)
+                    seen[normalized] = true
+					result += 1
 				}
 			}
 		}
 	}
 
-	return result
+    /*
+    for k, v := range nodes {
+
+        for _, n := range v {
+
+        }
+    }
+    */
+
+	return result, ""
 }
 
 func Day_23(t *testing.T) {
 	lanNodes := getDataDay23()
-	result1 := solve23(lanNodes)
+	result1, result2 := solve23(lanNodes)
 
 	assert.EqualValues(t, 7, result1)
-	//assert.EqualValues(t, 14869099597, result1)
+	assert.EqualValues(t, "co,de,ka,ta", result2)
+	//assert.EqualValues(t, 1154, result1)
 
 }
