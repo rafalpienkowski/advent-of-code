@@ -79,7 +79,7 @@ func solve25(keys [][5]int, locks [][5]int) int {
 	return result
 }
 
-func Test_Day_25(t *testing.T) {
+func Day_25(t *testing.T) {
 	keys, locks := getDataDay25()
 	result1 := solve25(keys, locks)
 
