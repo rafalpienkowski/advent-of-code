@@ -1,9 +1,10 @@
 package days
 
 import (
-	"fmt"
+	"container/list"
 	"math"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -19,269 +20,203 @@ type Key struct {
 }
 
 func getDataDay21() []string {
-	lines := ReadLines("../inputs/21.txt")
+	lines := ReadLines("../inputs/21a.txt")
 
-    return lines
+	return lines
 }
 
-func newKeyPad() map[string]Key {
-	keyPad := make(map[string]Key)
+var dirPad = map[string][]Move{
 
-	keyPad["A"] = Key{Neighboars: []Move{{Key: "0", Move: "<"}, {Key: "3", Move: "^"}}}
-	keyPad["0"] = Key{Neighboars: []Move{{Key: "2", Move: "^"}, {Key: "A", Move: ">"}}}
-	keyPad["1"] = Key{Neighboars: []Move{{Key: "2", Move: ">"}, {Key: "4", Move: "^"}}}
-	keyPad["2"] = Key{
-		Neighboars: []Move{
-			{Key: "0", Move: "v"},
-			{Key: "1", Move: "<"},
-			{Key: "5", Move: "^"},
-			{Key: "3", Move: ">"},
-		},
-	}
-	keyPad["3"] = Key{
-		Neighboars: []Move{{Key: "2", Move: "<"}, {Key: "A", Move: "v"}, {Key: "6", Move: "^"}},
-	}
-	keyPad["4"] = Key{
-		Neighboars: []Move{{Key: "1", Move: "v"}, {Key: "5", Move: ">"}, {Key: "7", Move: "^"}},
-	}
-	keyPad["5"] = Key{Neighboars: []Move{
+	"A": {{Key: "^", Move: "<"}, {Key: ">", Move: "v"}},
+	"<": {{Key: "v", Move: ">"}},
+	">": {{Key: "v", Move: "<"}, {Key: "A", Move: "^"}},
+	"v": {{Key: "<", Move: "<"}, {Key: ">", Move: ">"}, {Key: "^", Move: "^"}},
+	"^": {{Key: "v", Move: "v"}, {Key: "A", Move: ">"}},
+}
+
+var keypad = map[string][]Move{
+	"A": {{Key: "0", Move: "<"}, {Key: "3", Move: "^"}},
+	"0": {{Key: "2", Move: "^"}, {Key: "A", Move: ">"}},
+	"1": {{Key: "2", Move: ">"}, {Key: "4", Move: "^"}},
+	"2": {
+		{Key: "0", Move: "v"},
+		{Key: "1", Move: "<"},
+		{Key: "5", Move: "^"},
+		{Key: "3", Move: ">"},
+	},
+	"3": {{Key: "2", Move: "<"}, {Key: "A", Move: "v"}, {Key: "6", Move: "^"}},
+	"4": {{Key: "1", Move: "v"}, {Key: "5", Move: ">"}, {Key: "7", Move: "^"}},
+	"5": {
 		{Key: "2", Move: "v"},
 		{Key: "4", Move: "<"},
 		{Key: "6", Move: ">"},
 		{Key: "8", Move: "^"},
-	}}
-	keyPad["6"] = Key{
-		Neighboars: []Move{{Key: "3", Move: "v"}, {Key: "5", Move: "<"}, {Key: "9", Move: "^"}},
-	}
-	keyPad["7"] = Key{Neighboars: []Move{{Key: "4", Move: "v"}, {Key: "8", Move: ">"}}}
-	keyPad["8"] = Key{
-		Neighboars: []Move{{Key: "7", Move: "<"}, {Key: "5", Move: "v"}, {Key: "9", Move: ">"}},
-	}
-	keyPad["9"] = Key{Neighboars: []Move{{Key: "8", Move: "<"}, {Key: "6", Move: "v"}}}
-
-	return keyPad
+	},
+	"6": {{Key: "3", Move: "v"}, {Key: "5", Move: "<"}, {Key: "9", Move: "^"}},
+	"7": {{Key: "4", Move: "v"}, {Key: "8", Move: ">"}},
+	"8": {{Key: "7", Move: "<"}, {Key: "5", Move: "v"}, {Key: "9", Move: ">"}},
+	"9": {{Key: "8", Move: "<"}, {Key: "6", Move: "v"}},
 }
 
-func getKeys() []string {
-	return []string{"A", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
+type Path struct {
+	Node string
+	Path []string
 }
 
-func getDirs() []string {
-	return []string{">", "<", "v", "^", "A"}
-}
+func findShortestPaths(start, target string, pad map[string][]Move) []string {
+	queue := list.New()
+	queue.PushBack(Path{Node: start, Path: []string{}})
+	visited := make(map[string]bool)
+	shortestPaths := [][]string{}
+	shortestLength := -1
 
-func newDirPad() map[string]Key {
-	dirPad := make(map[string]Key)
+	for queue.Len() > 0 {
+		current := queue.Remove(queue.Front()).(Path)
 
-	dirPad["A"] = Key{Neighboars: []Move{{Key: "^", Move: "<"}, {Key: ">", Move: "v"}}}
-	dirPad["<"] = Key{Neighboars: []Move{{Key: "v", Move: ">"}}}
-	dirPad[">"] = Key{Neighboars: []Move{{Key: "v", Move: "<"}, {Key: "A", Move: "^"}}}
-	dirPad["v"] = Key{
-		Neighboars: []Move{{Key: "<", Move: "<"}, {Key: ">", Move: ">"}, {Key: "^", Move: "^"}},
-	}
-	dirPad["^"] = Key{Neighboars: []Move{{Key: "v", Move: "v"}, {Key: "A", Move: ">"}}}
-
-	return dirPad
-}
-
-func findMinDirPaths() map[string]map[string]Move {
-	maps := make(map[string]map[string]Move)
-	defaultMove := Move{Key: " ", Move: " "}
-
-	for _, k := range getDirs() {
-
-		dists := make(map[string]int)
-		paths := make(map[string]Move)
-		pg := newDirPad()
-
-		var q []string
-		for _, p := range getDirs() {
-			dists[p] = math.MaxInt
-			paths[p] = defaultMove
-			q = append(q, p)
-		}
-		dists[k] = 0
-
-		removePos := func(e string) {
-			var tmp []string
-			for _, p := range q {
-				if p == e {
-					continue
-				}
-				tmp = append(tmp, p)
-			}
-			q = tmp
+		if shortestLength != -1 && len(current.Path) > shortestLength {
+			break
 		}
 
-		findMin := func() string {
-			cost := math.MaxInt
-			e := " "
-			for _, v := range q {
-				if dists[v] < cost {
-					cost = dists[v]
-					e = v
-				}
+		if current.Node == target {
+			if shortestLength == -1 || len(current.Path) == shortestLength {
+				shortestLength = len(current.Path)
+				shortestPaths = append(shortestPaths, current.Path)
 			}
-
-			return e
+			continue
 		}
 
-		for len(q) > 0 {
-			curr := findMin()
-			if curr == " " {
-				break
-			}
-			removePos(curr)
-			for _, n := range pg[curr].Neighboars {
-				if dists[n.Key] > dists[curr]+1 {
-					dists[n.Key] = dists[curr] + 1
-					paths[n.Key] = Move{Key: curr, Move: n.Move}
-				}
+		visited[current.Node] = true
+
+		for _, neighbor := range pad[current.Node] {
+			if !visited[neighbor.Key] {
+				newPath := append([]string{}, current.Path...)
+				newPath = append(newPath, neighbor.Move)
+				queue.PushBack(Path{Node: neighbor.Key, Path: newPath})
 			}
 		}
-
-		maps[k] = paths
 	}
 
-	return maps
-}
+	var paths []string
 
-func findMinPaths() map[string]map[string]Move {
-
-	maps := make(map[string]map[string]Move)
-	defaultMove := Move{Key: " ", Move: " "}
-
-	for _, k := range getKeys() {
-
-		dists := make(map[string]int)
-		paths := make(map[string]Move)
-		pg := newKeyPad()
-
-		var q []string
-		for _, p := range getKeys() {
-			dists[p] = math.MaxInt
-			paths[p] = defaultMove
-			q = append(q, p)
-		}
-		dists[k] = 0
-
-		removePos := func(e string) {
-			var tmp []string
-			for _, p := range q {
-				if p == e {
-					continue
-				}
-				tmp = append(tmp, p)
-			}
-			q = tmp
-		}
-
-		findMin := func() string {
-			cost := math.MaxInt
-			e := " "
-			for _, v := range q {
-				if dists[v] < cost {
-					cost = dists[v]
-					e = v
-				}
-			}
-
-			return e
-		}
-
-		for len(q) > 0 {
-			curr := findMin()
-			if curr == " " {
-				break
-			}
-			removePos(curr)
-			for _, n := range pg[curr].Neighboars {
-				if dists[n.Key] > dists[curr]+1 {
-					dists[n.Key] = dists[curr] + 1
-					paths[n.Key] = Move{Key: curr, Move: n.Move}
-				}
-			}
-		}
-
-		maps[k] = paths
+	for i := range shortestPaths {
+		paths = append(paths, strings.Join(shortestPaths[i], "")+"A")
 	}
 
-	return maps
+	return paths
 }
 
-func solve21(data []string) int {
+func minLen(test []string) int {
+	min := math.MaxInt
+	for _, t := range test {
+		if len(t) < min {
+			min = len(t)
+		}
+	}
+	return min
+}
 
-	minPaths := findMinPaths()
-	minDirPaths := findMinDirPaths()
-    result := 0
+func solve21_2(numbers []string) int {
+	result := 0
 
-	for _, d := range data {
-
+	for _, number := range numbers {
+		minMin := math.MaxInt
 		start := "A"
-		startM1 := "A"
-		startM2 := "A"
-		var moves []string
-		var moves1 []string
-		var moves2 []string
+		var pp []string
+		for _, d := range number {
+			digit := string(d)
+			paths := findShortestPaths(start, digit, keypad)
 
-		for _, c := range d {
-			end := string(c)
-			var cMoves []string
-
-			for end != start {
-				m := minPaths[start][end]
-				end = m.Key
-				cMoves = append([]string{m.Move}, cMoves...)
+			var result []string
+			if len(pp) > 0 {
+				for _, str1 := range pp {
+					for _, str2 := range paths {
+						result = append(result, str1+str2)
+					}
+				}
+				pp = result
+			}
+			if len(pp) == 0 {
+				pp = append(pp, paths...)
 			}
 
-			start = string(c)
-			cMoves = append(cMoves, "A")
-			moves = append(moves, cMoves...)
+			start = digit
 		}
 
-		for _, m1 := range moves {
-			end := m1
-			var c1Moves []string
+		min1 := minLen(pp)
 
-			for end != startM1 {
-				m := minDirPaths[startM1][end]
-				end = m.Key
-				c1Moves = append([]string{m.Move}, c1Moves...)
+		for _, path1 := range pp {
+			if len(path1) > min1 {
+				continue
+			}
+			start1 := "A"
+			var pp1 []string
+			for _, d := range path1 {
+				pos1 := string(d)
+				paths1 := findShortestPaths(start1, pos1, dirPad)
+
+				var result []string
+				if len(pp1) > 0 {
+					for _, str1 := range pp1 {
+						for _, str2 := range paths1 {
+							result = append(result, str1+str2)
+						}
+					}
+					pp1 = result
+				}
+				if len(pp1) == 0 {
+					pp1 = append(pp1, paths1...)
+				}
+
+				start1 = pos1
 			}
 
-			startM1 = m1
-			c1Moves = append(c1Moves, "A")
-			moves1 = append(moves1, c1Moves...)
-		}
+			min2 := minLen(pp1)
 
-		for _, m2 := range moves1 {
-			end := m2
-			var c2Moves []string
+			for _, path2 := range pp1 {
+				if len(path2) > min2 {
+					continue
+				}
+				start2 := "A"
+				var pp2 []string
+				for _, d2 := range path2 {
+					pos2 := string(d2)
+					paths2 := findShortestPaths(start2, pos2, dirPad)
 
-			for end != startM2 {
-				m := minDirPaths[startM2][end]
-				end = m.Key
-				c2Moves = append([]string{m.Move}, c2Moves...)
+					var result []string
+					if len(pp2) > 0 {
+						for _, str1 := range pp2 {
+							for _, str2 := range paths2 {
+								result = append(result, str1+str2)
+							}
+						}
+						pp2 = result
+					}
+					if len(pp2) == 0 {
+						pp2 = append(pp2, paths2...)
+					}
+
+					start2 = pos2
+				}
+
+				min3 := minLen(pp2)
+				if min3 < minMin {
+					minMin = min3
+				}
 			}
-
-			startM2 = m2
-			c2Moves = append(c2Moves, "A")
-			moves2 = append(moves2, c2Moves...)
 		}
 
-        dInt, _ := strconv.Atoi(d[:3])
-        fmt.Printf("Len %v, Code %v\n", len(moves2), dInt) 
+		dInt, _ := strconv.Atoi(number[:3])
 
-        result += dInt * len(moves2)
+		result += dInt * minMin
 	}
 
 	return result
 }
 
-func Test_Day_21(t *testing.T) {
+func Day_21(t *testing.T) {
 
 	data := getDataDay21()
-	result1 := solve21(data)
+	result1 := solve21_2(data)
 
 	assert.EqualValues(t, 126384, result1)
 }
