@@ -8,31 +8,27 @@ public class Safe
 
     public void ReadLines(IEnumerable<string> lines)
     {
-        var idx = 0;
         foreach (var line in lines)
         {
-            if (idx++ > 400)
-            {
-                //return;
-            }
             var direction = line[0];
             var move = int.Parse(line[1..]);
 
-            if (direction == 'L')
+            for (int i = 0; i < move; i++)
             {
-                Position = (Position - move + 100) % 100;
-            }
-            else if (direction == 'R')
-            {
-                Position = (Position + move) % 100;
-            }
+                if (direction == 'L')
+                {
+                    Position = (Position - 1 + 100) % 100;
+                }
+                else if (direction == 'R')
+                {
+                    Position = (Position + 1) % 100;
+                }
 
-            if (Position == 0)
-            {
-                Zeros++;
+                if (Position == 0)
+                {
+                    Zeros++;
+                }
             }
-
-            //Console.WriteLine($"The dial is rotated: {line} to point at {Position}");
         }
     }
 }
@@ -69,7 +65,7 @@ public class Day1
         Assert.Equal(6, _safe.Zeros);
     }
 
-    //[Fact]
+    [Fact]
     public void Test4(){
         var lines = AdventOfCode.Utils.ReadInputLines("day1b.txt");
         _safe.ReadLines(lines);
