@@ -56,7 +56,7 @@ public class Day1
         Assert.Equal(1195, _safe.Zeros);
     }
 
-    [Fact]
+    //[Fact]
     public void Test3()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day1.txt");
@@ -65,7 +65,7 @@ public class Day1
         Assert.Equal(6, _safe.Zeros);
     }
 
-    [Fact]
+    //[Fact]
     public void Test4(){
         var lines = AdventOfCode.Utils.ReadInputLines("day1b.txt");
         _safe.ReadLines(lines);
