@@ -2,8 +2,8 @@ namespace AdventOfCode;
 
 public static class Utils
 {
-    public static IEnumerable<string> ReadInputLines(string fileName)
+    public static List<string> ReadInputLines(string fileName)
     {
-        return File.ReadLines(Path.Combine("input", fileName));
+        return File.ReadLines(Path.Combine("input", fileName)).ToList();
     }
 }
