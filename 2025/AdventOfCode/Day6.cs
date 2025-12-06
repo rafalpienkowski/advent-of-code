@@ -12,7 +12,6 @@ class Homeworker
         var inputList = input.Where(line => !string.IsNullOrWhiteSpace(line)).ToList();
         if (inputList.Count == 0) return;
 
-        // Store as char matrix
         int rows = inputList.Count;
         int cols = inputList[0].Length;
         char[,] matrix = new char[rows, cols];
@@ -26,7 +25,6 @@ class Homeworker
             }
         }
 
-        // Find problem boundaries (columns that are all spaces except possibly the operator row)
         List<(int start, int end)> problems = new List<(int, int)>();
         int problemStart = -1;
 
@@ -59,19 +57,16 @@ class Homeworker
             }
         }
 
-        // Add last problem if it exists
         if (problemStart != -1)
         {
             problems.Add((problemStart, cols - 1));
         }
 
-        // Process each problem
         foreach (var (start, end) in problems)
         {
             List<long> numbers = new List<long>();
             char? operation = null;
 
-            // Read columns from RIGHT to LEFT within this problem
             for (int col = end; col >= start; col--)
             {
                 string columnValue = "";
@@ -97,7 +92,6 @@ class Homeworker
                 }
             }
 
-            // Calculate result for this problem
             if (numbers.Count > 0 && operation.HasValue)
             {
                 long result = numbers[0];
