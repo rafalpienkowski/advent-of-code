@@ -100,7 +100,7 @@ class Finder
 public class Day2
 {
     //[Fact]
-    public void Test1()
+    private void Test1()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day2.txt");
         var line = lines.First();
@@ -111,7 +111,7 @@ public class Day2
     }
 
     //[Fact]
-    public void Test2()
+    private void Test2()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day2b.txt");
         var line = lines.First();
@@ -122,7 +122,7 @@ public class Day2
     }
 
     //[Fact]
-    public void Test3()
+    private void Test3()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day2.txt");
         var line = lines.First();
@@ -133,7 +133,7 @@ public class Day2
     }
 
     //[Fact]
-    public void Test4()
+    private void Test4()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day2b.txt");
         var line = lines.First();

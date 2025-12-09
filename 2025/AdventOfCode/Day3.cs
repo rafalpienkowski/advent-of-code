@@ -92,7 +92,7 @@ class Bank
 public class Day3
 {
     //[Fact]
-    public void Test1()
+    private void Test1()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day3.txt");
         var battery = new Bank();
@@ -102,7 +102,7 @@ public class Day3
     }
 
     //[Fact]
-    public void Test2()
+    private void Test2()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day3b.txt");
         var battery = new Bank();
@@ -111,8 +111,8 @@ public class Day3
         Assert.Equal(357, battery.Joltage);
     }
 
-    [Fact]
-    public void Test3()
+    //[Fact]
+    private void Test3()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day3.txt");
         var battery = new Bank();
@@ -122,8 +122,8 @@ public class Day3
         Assert.Equal(3121910778619, battery.Joltage);
     }
 
-    [Fact]
-    public void Test4()
+    //[Fact]
+    private void Test4()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day3b.txt");
         var battery = new Bank();

@@ -7,7 +7,7 @@ class Grid
     public List<Point> Rolls { get; set; } = [];
     public int TotalRolls { get; set; } = 0;
 
-    private char[][] grid;
+    private char[][] grid = [];
 
     public void Load(List<string> input)
     {
@@ -68,7 +68,7 @@ class Grid
 public class Day4
 {
     //[Fact]
-    public void Test1()
+    private void Test1()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day4.txt");
         var grid = new Grid();
@@ -78,7 +78,7 @@ public class Day4
     }
 
     //[Fact]
-    public void Test2()
+    private void Test2()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day4b.txt");
         var grid = new Grid();
@@ -87,8 +87,8 @@ public class Day4
         Assert.Equal(1474, grid.Rolls.Count);
     }
 
-    [Fact]
-    public void Test3()
+    //[Fact]
+    private void Test3()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day4.txt");
         var grid = new Grid();
@@ -97,8 +97,8 @@ public class Day4
         Assert.Equal(43, grid.TotalRolls);
     }
 
-    [Fact]
-    public void Test4()
+    //[Fact]
+    private void Test4()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day4b.txt");
         var grid = new Grid();

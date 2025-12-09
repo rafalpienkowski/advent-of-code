@@ -4,7 +4,7 @@ class Laboratory
 {
     public long Result { get; private set; } = 0;
     public long Timelines { get; private set; }
-    char[][] labGrid;
+    private char[][] labGrid = [];
 
     public void Load(IEnumerable<string> input)
     {
@@ -123,7 +123,7 @@ class Laboratory
 public class Day7
 {
     //[Fact]
-    public void Test1()
+    private void Test1()
     {
         var input = AdventOfCode.Utils.ReadInputLines("day7.txt");
         var lab = new Laboratory();
@@ -133,7 +133,7 @@ public class Day7
     }
 
     //[Fact]
-    public void Test2()
+    private void Test2()
     {
         var input = AdventOfCode.Utils.ReadInputLines("day7b.txt");
         var lab = new Laboratory();
@@ -143,7 +143,7 @@ public class Day7
     }
 
     //[Fact]
-    public void Test3()
+    private void Test3()
     {
         var input = AdventOfCode.Utils.ReadInputLines("day7.txt");
         var lab = new Laboratory();
@@ -153,7 +153,7 @@ public class Day7
     }
 
     //[Fact]
-    public void Test4()
+    private void Test4()
     {
         var input = AdventOfCode.Utils.ReadInputLines("day7b.txt");
         var lab = new Laboratory();

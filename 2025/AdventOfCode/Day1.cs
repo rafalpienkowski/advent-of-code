@@ -39,7 +39,7 @@ public class Day1
     private readonly Safe _safe = new Safe();
 
     //[Fact]
-    public void Test1()
+    private void Test1()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day1.txt");
         _safe.ReadLines(lines);
@@ -48,7 +48,7 @@ public class Day1
     }
 
     //[Fact]
-    public void Test2()
+    private void Test2()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day1b.txt");
         _safe.ReadLines(lines);
@@ -57,7 +57,7 @@ public class Day1
     }
 
     //[Fact]
-    public void Test3()
+    private void Test3()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day1.txt");
         _safe.ReadLines(lines);
@@ -66,7 +66,7 @@ public class Day1
     }
 
     //[Fact]
-    public void Test4(){
+    private void Test4(){
         var lines = AdventOfCode.Utils.ReadInputLines("day1b.txt");
         _safe.ReadLines(lines);
 

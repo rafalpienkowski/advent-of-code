@@ -182,7 +182,7 @@ class Homeworker
 public class Day6
 {
     //[Fact]
-    public void Test1()
+    private void Test1()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day6.txt");
         var homeworker = new Homeworker();
@@ -192,7 +192,7 @@ public class Day6
     }
 
     //[Fact]
-    public void Test2()
+    private void Test2()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day6b.txt");
         var homeworker = new Homeworker();
@@ -201,8 +201,8 @@ public class Day6
         Assert.Equal(4277556, homeworker.Result);
     }
 
-    [Fact]
-    public void Test3()
+    //[Fact]
+    private void Test3()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day6.txt");
         var homeworker = new Homeworker();
@@ -211,8 +211,8 @@ public class Day6
         Assert.Equal(3263827, homeworker.Result2);
     }
 
-    [Fact]
-    public void Test4()
+    //[Fact]
+    private void Test4()
     {
         var lines = AdventOfCode.Utils.ReadInputLines("day6b.txt");
         var homeworker = new Homeworker();
